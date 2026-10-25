@@ -1,0 +1,239 @@
+<div class="delegate-card-wrapper" [class.compact-mode]="compact">
+  <!-- Card Header -->
+  <div class="card-top-banner">
+    <div class="banner-emblem">
+      <div class="youth-logo">
+        <svg viewBox="0 0 100 100" class="logo-svg">
+          <circle cx="50" cy="50" r="48" fill="#005baa" stroke="#ffcc00" stroke-width="3"/>
+          <path d="M50 15 L60 38 L85 41 L67 58 L71 83 L50 71 L29 83 L33 58 L15 41 L40 38 Z" fill="#ffcc00"/>
+        </svg>
+      </div>
+    </div>
+    <div class="banner-titles">
+      <span class="org-name">{{ congressInfo?.organization || 'ĐOÀN TNCS HỒ CHÍ MINH' }}</span>
+      <h3 class="unit-title">{{ congressInfo?.unitName || 'TRƯỜNG ĐẠI HỌC KINH TẾ - LUẬT' }}</h3>
+      <p class="congress-title">{{ congressInfo?.title }} • Ngày {{ congressInfo?.date || '17/01/2027' }}</p>
+    </div>
+    <div class="badge-status-pill" [class.verified]="delegate.checkedIn" [class.pending]="!delegate.checkedIn">
+      <span class="status-dot"></span>
+      <span class="status-text">{{ delegate.checkedIn ? 'ĐÃ ĐIỂM DANH' : 'CHƯA ĐIỂM DANH' }}</span>
+    </div>
+  </div>
+
+  <!-- Verification Stamp Ribbon -->
+  <div class="verification-stamp-area">
+    <div class="stamp-box" [class.stamped]="delegate.checkedIn">
+      <div class="stamp-inner">
+        <div class="stamp-star">★ ★ ★</div>
+        <div class="stamp-text">ĐỦ TƯ CÁCH ĐẠI BIỂU</div>
+        <div class="stamp-sub">BAN THẨM TRA TƯ CÁCH</div>
+        <div class="stamp-code">MSSV: {{ delegate.mssv }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Body with Avatar and Details -->
+  <div class="card-main-content">
+    <div class="profile-header-row">
+      <div class="avatar-container">
+        @if (delegate.avatarUrl) {
+          <img [src]="delegate.avatarUrl" [alt]="delegate.fullName" class="delegate-avatar" />
+        } @else {
+          <div class="avatar-placeholder">
+            {{ delegate.fullName.charAt(0) }}
+          </div>
+        }
+        <span class="delegate-id-badge">{{ delegate.id }}</span>
+      </div>
+
+      <div class="name-unit-box">
+        <div class="mssv-badge-pill">
+          <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+            <line x1="7" y1="8" x2="17" y2="8"></line>
+            <line x1="7" y1="12" x2="17" y2="12"></line>
+          </svg>
+          MSSV: <strong>{{ delegate.mssv }}</strong>
+        </div>
+
+        <h2 class="delegate-fullname">{{ delegate.fullName }}</h2>
+
+        <div class="delegate-branch">
+          <svg class="icon-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+          </svg>
+          <strong>{{ delegate.unit }}</strong>
+          <span class="seat-tag">🪑 {{ delegate.seatNumber || 'Hội trường Lớn' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Survey Metadata Grid -->
+    <div class="details-grid">
+      <!-- Ngày sinh & Tuổi (tính đến 17/01/2027) -->
+      <div class="detail-item">
+        <span class="label">Ngày sinh (DOB) / Tuổi (17/01/2027)</span>
+        <span class="value highlight-text">
+          {{ formatDob(delegate.dob) }}
+          <span class="age-badge">({{ calculateAge(delegate.dob) }} tuổi)</span>
+        </span>
+      </div>
+
+      <!-- Giới tính -->
+      <div class="detail-item">
+        <span class="label">Giới tính</span>
+        <span class="value">
+          <span class="gender-pill" [class.male]="delegate.gender === 'Nam'" [class.female]="delegate.gender === 'Nữ'">
+            {{ delegate.gender === 'Nam' ? '♂ Nam' : '♀ Nữ' }}
+          </span>
+        </span>
+      </div>
+
+      <!-- Dân tộc -->
+      <div class="detail-item">
+        <span class="label">Dân tộc</span>
+        <span class="value">
+          <strong>{{ delegate.ethnicity }}</strong>
+          @if (delegate.ethnicity !== 'Kinh') {
+            <span class="badge-minority">Thiểu số</span>
+          }
+        </span>
+      </div>
+
+      <!-- Tôn giáo -->
+      <div class="detail-item">
+        <span class="label">Tôn giáo</span>
+        <span class="value">{{ delegate.religion }}</span>
+      </div>
+
+      <!-- Đảng viên (0/1) -->
+      <div class="detail-item">
+        <span class="label">Đảng viên / Đoàn viên</span>
+        <span class="value">
+          @if (delegate.isPartyMember === 1) {
+            <span class="politic-pill party-member">
+              ⭐ Đảng viên Đảng CSVN (Đoàn viên)
+            </span>
+          } @else {
+            <span class="politic-pill doan-vien">
+              Đoàn viên TNCS Hồ Chí Minh
+            </span>
+          }
+        </span>
+      </div>
+
+      <!-- Trình độ chuyên môn -->
+      <div class="detail-item">
+        <span class="label">Trình độ chuyên môn</span>
+        <span class="value academic-badge">
+          🎓 {{ delegate.academicLevel }}
+        </span>
+      </div>
+
+      <!-- Lý luận chính trị -->
+      <div class="detail-item full-width">
+        <span class="label">Lý luận chính trị</span>
+        <span class="value llct-badge">
+          📘 {{ delegate.politicalTheory }}
+        </span>
+      </div>
+
+      <!-- Thời gian điểm danh -->
+      <div class="detail-item full-width">
+        <span class="label">Thời gian điểm danh</span>
+        <span class="value time-value">
+          {{ delegate.checkInTime || 'Chưa ghi nhận điểm danh tại cửa' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Active Achievements (0/1 Indicators) -->
+    <div class="achievements-section">
+      <div class="achieve-title">
+        <svg class="icon-inline text-gold" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <span>THÀNH TÍCH TIÊU BIỂU CỦA ĐỒNG CHÍ (KHẢO SÁT FORM)</span>
+      </div>
+
+      <div class="achieve-tags-container">
+        <!-- Công tác Đoàn - Hội -->
+        @if (delegate.achievements.isDoanVienTieuBieu === 1) {
+          <span class="achieve-pill badge-blue">✓ Đoàn viên tiêu biểu</span>
+        }
+        @if (delegate.achievements.isCanBoTieuBieu === 1) {
+          <span class="achieve-pill badge-blue">✓ Cán bộ Đoàn - Hội tiêu biểu</span>
+        }
+        @if (delegate.achievements.isThanhNienLamTheoLoiBac === 1) {
+          <span class="achieve-pill badge-red">★ Thanh niên Kinh tế - Luật làm theo lời Bác</span>
+        }
+        @if (delegate.achievements.isBtvThanhDoan === 1) {
+          <span class="achieve-pill badge-red">★ BTV Thành Đoàn TP. Hồ Chí Minh</span>
+        }
+        @if (delegate.achievements.isBangKhenTWDoan === 1) {
+          <span class="achieve-pill badge-gold">★ Bằng khen Trung ương Đoàn</span>
+        }
+
+        <!-- NCKH & Học thuật -->
+        @if (delegate.achievements.isNckhCapTruong === 1) {
+          <span class="achieve-pill badge-green">🔬 NCKH cấp Trường</span>
+        }
+        @if (delegate.achievements.isDatGiaiHocThuat === 1) {
+          <span class="achieve-pill badge-green">🏆 Đạt giải cuộc thi học thuật</span>
+        }
+
+        <!-- Văn thể mỹ -->
+        @if (delegate.achievements.isVanTheMy === 1) {
+          <span class="achieve-pill badge-purple">🎭 Hoạt động Văn thể mỹ</span>
+        }
+
+        <!-- Sinh viên 5 tốt -->
+        @if (delegate.achievements.isSv5TotCapTruong === 1) {
+          <span class="achieve-pill badge-cyan">🏅 SV 5 tốt cấp Trường</span>
+        }
+        @if (delegate.achievements.isSv5TotCapDhqg === 1) {
+          <span class="achieve-pill badge-cyan">🏅 SV 5 tốt cấp ĐHQG</span>
+        }
+        @if (delegate.achievements.isSv5TotCapThanhPho === 1) {
+          <span class="achieve-pill badge-gold">🌟 SV 5 tốt cấp Thành phố</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Action Footer -->
+  <div class="card-footer-actions">
+    <button type="button" class="btn btn-checkin" (click)="onToggle()" [class.btn-checked]="delegate.checkedIn">
+      @if (delegate.checkedIn) {
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Đã Điểm Danh (Bấm để hủy)</span>
+      } @else {
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>Xác Nhận Điểm Danh Ngay</span>
+      }
+    </button>
+
+    <button type="button" class="btn btn-print" (click)="onPrint()" title="Xem mẫu thẻ in">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      <span>In Thẻ Đeo</span>
+    </button>
+
+    <button type="button" class="btn btn-next" (click)="onScanNext()" title="Quét đại biểu tiếp theo">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polygon points="10 8 16 12 10 16 10 8"></polygon>
+      </svg>
+      <span>Quét Tiếp</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,123 @@
+:root {
+  --youth-blue: #005baa;
+  --youth-dark-blue: #003b73;
+  --youth-deep-navy: #002244;
+  --youth-gold: #ffcc00;
+  --youth-gold-hover: #ffdd44;
+  --youth-red: #da251d;
+  --youth-green: #10b981;
+  --youth-amber: #f59e0b;
+  --bg-slate: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-light: #e2e8f0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-primary);
+  background-color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  color: var(--text-primary);
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print CSS */
+@media print {
+  @page {
+    margin: 1cm;
+    size: auto;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+}
+
+/* ==========================================================================
+   Html5Qrcode Global Video & Mirror Styles
+   (Needed globally because html5-qrcode injects <video> dynamically at runtime)
+   ========================================================================== */
+#qr-reader-container,
+.html5-qr-reader {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background-color: #000000 !important;
+}
+
+#qr-reader-container video,
+.html5-qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  margin: 0 auto !important;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Mirror Flip when is-mirrored class is applied */
+#qr-reader-container.is-mirrored video,
+.html5-qr-reader.is-mirrored video,
+.is-mirrored video {
+  transform: scaleX(-1) !important;
+  -webkit-transform: scaleX(-1) !important;
+}
+
+/* Non-mirrored explicit reset */
+#qr-reader-container:not(.is-mirrored) video,
+.html5-qr-reader:not(.is-mirrored) video {
+  transform: scaleX(1) !important;
+  -webkit-transform: scaleX(1) !important;
+}
+
+/* Hide default html5-qrcode off-center gray box & duplicate overlays */
+#qr-shaded-region,
+#qr-reader-container > div:not(:first-child) {
+  display: none !important;
+}
+

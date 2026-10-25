@@ -1,0 +1,277 @@
+<div class="survey-form-container">
+  @if (!submittedDelegate()) {
+    <div class="survey-card">
+      <!-- Form Header -->
+      <div class="survey-header">
+        <div class="header-emblem">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" fill="#005baa" stroke="#ffcc00" stroke-width="4"/>
+            <polygon points="50,15 61,38 86,41 68,58 72,83 50,71 28,83 32,58 14,41 39,38" fill="#ffcc00"/>
+          </svg>
+        </div>
+        <div>
+          <span class="sub-org">{{ delegateService.congressInfo().organization }}</span>
+          <h2>PHIẾU THU THẬP THÔNG TIN 100 ĐẠI BIỂU TRIỆU TẬP</h2>
+          <p class="term-text">{{ delegateService.congressInfo().title }} • Ngày tổ chức: 17/01/2027</p>
+        </div>
+      </div>
+
+      <div class="survey-guide">
+        💡 <strong>Hướng dẫn:</strong> Mỗi đại biểu được triệu tập sẽ điền phiếu khảo sát này. Sau khi gửi form, hệ thống sẽ <strong>tự động tạo Mã QR định danh theo MSSV</strong> để đồng chí lưu lại và sử dụng quét khi bước vào hội trường Đại hội!
+      </div>
+
+      <!-- Main Form -->
+      <form class="survey-body" (ngSubmit)="onSubmitSurvey()">
+        <!-- Group 1: Thông tin cơ bản -->
+        <div class="form-section-title">
+          <span class="section-step">1</span>
+          <h3>THÔNG TIN CƠ BẢN ĐẠI BIỂU</h3>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-field required">
+            <label>Mã số sinh viên (MSSV) *</label>
+            <input
+              type="text"
+              [(ngModel)]="mssv"
+              name="mssv"
+              placeholder="VD: K224111234, 22520001..."
+              class="inp-ctrl"
+              required
+            />
+            <span class="field-hint">Khóa chính để tạo mã QR điểm danh gửi cho đại biểu</span>
+          </div>
+
+          <div class="form-field required">
+            <label>Họ và Tên Đoàn viên / Đại biểu *</label>
+            <input
+              type="text"
+              [(ngModel)]="fullName"
+              name="fullName"
+              placeholder="VD: Nguyễn Văn An"
+              class="inp-ctrl"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-field required">
+            <label>Chi đoàn *</label>
+            <input
+              type="text"
+              [(ngModel)]="unit"
+              name="unit"
+              placeholder="VD: Chi đoàn K22401"
+              class="inp-ctrl"
+              required
+            />
+          </div>
+
+          <div class="form-field required">
+            <label>Ngày sinh (DOB) *</label>
+            <input
+              type="date"
+              [(ngModel)]="dob"
+              name="dob"
+              class="inp-ctrl"
+              required
+            />
+            <span class="field-hint text-blue">Tuổi tính tại ngày 17/01/2027: <strong>{{ calculatedAge }} tuổi</strong></span>
+          </div>
+
+          <div class="form-field required">
+            <label>Giới tính *</label>
+            <select [(ngModel)]="gender" name="gender" class="inp-ctrl">
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Group 2: Chính trị, Dân tộc & Tôn giáo -->
+        <div class="form-section-title">
+          <span class="section-step">2</span>
+          <h3>CHÍNH TRỊ, DÂN TỘC & TÔN GIÁO</h3>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-field required">
+            <label>Đảng viên Đảng CSVN (0/1) *</label>
+            <select [(ngModel)]="isPartyMember" name="isPartyMember" class="inp-ctrl">
+              <option [ngValue]="0">0 - Không phải Đảng viên (Là Đoàn viên)</option>
+              <option [ngValue]="1">1 - Là Đảng viên Đảng CSVN (Là Đoàn viên luôn)</option>
+            </select>
+          </div>
+
+          <div class="form-field required">
+            <label>Dân tộc *</label>
+            <select [(ngModel)]="ethnicity" name="ethnicity" class="inp-ctrl">
+              <option value="Kinh">Kinh</option>
+              <option value="Hoa">Hoa</option>
+              <option value="Chăm">Chăm</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+
+          <div class="form-field required">
+            <label>Tôn giáo *</label>
+            <select [(ngModel)]="religion" name="religion" class="inp-ctrl">
+              <option value="Không">Không</option>
+              <option value="Phật giáo">Phật giáo</option>
+              <option value="Công giáo">Công giáo</option>
+              <option value="Tin lành">Tin lành</option>
+              <option value="Hòa Hảo">Hòa Hảo</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-field required">
+            <label>Trình độ chuyên môn *</label>
+            <select [(ngModel)]="academicLevel" name="academicLevel" class="inp-ctrl">
+              <option value="Đang học ĐH">Đang học ĐH</option>
+              <option value="Thạc sĩ">Thạc sĩ</option>
+              <option value="Tiến sĩ">Tiến sĩ</option>
+            </select>
+          </div>
+
+          <div class="form-field required">
+            <label>Lý luận chính trị *</label>
+            <select [(ngModel)]="politicalTheory" name="politicalTheory" class="inp-ctrl">
+              <option value="Hoàn thành các bài LLCT">Hoàn thành các bài LLCT (Lý luận chính trị)</option>
+              <option value="Sơ cấp">Sơ cấp</option>
+              <option value="Trung cấp">Trung cấp</option>
+              <option value="Cao cấp">Cao cấp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Group 3: Thành tích tiêu biểu (biến 0/1) -->
+        <div class="form-section-title">
+          <span class="section-step">3</span>
+          <h3>THÀNH TÍCH TIÊU BIỂU (TÍCH CHỌN BIẾN 0/1)</h3>
+        </div>
+
+        <div class="achieve-grid-selection">
+          <!-- Công tác Đoàn - Hội -->
+          <div class="selection-card">
+            <h4>★ Công tác Đại hội / Đoàn - Hội:</h4>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isDoanVienTieuBieu" name="isDoanVienTieuBieu" />
+              <span>Đoàn viên tiêu biểu (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isCanBoTieuBieu" name="isCanBoTieuBieu" />
+              <span>Cán bộ Đoàn - Hội tiêu biểu (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isThanhNienLamTheoLoiBac" name="isThanhNienLamTheoLoiBac" />
+              <span>Thanh niên Kinh tế - Luật làm theo lời Bác (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isBtvThanhDoan" name="isBtvThanhDoan" />
+              <span>BTV Thành Đoàn TP. Hồ Chí Minh (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isBangKhenTWDoan" name="isBangKhenTWDoan" />
+              <span>Bằng khen từ Trung ương Đoàn (0/1)</span>
+            </label>
+          </div>
+
+          <!-- Học thuật, NCKH & Văn thể mỹ -->
+          <div class="selection-card">
+            <h4>🔬 Học tập, NCKH & Văn Thể Mỹ:</h4>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isNckhCapTruong" name="isNckhCapTruong" />
+              <span>Tham gia NCKH cấp Trường (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isDatGiaiHocThuat" name="isDatGiaiHocThuat" />
+              <span>Đạt giải cuộc thi học thuật (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isVanTheMy" name="isVanTheMy" />
+              <span>Tích cực tham gia Văn thể mỹ (0/1)</span>
+            </label>
+          </div>
+
+          <!-- Sinh viên 5 tốt -->
+          <div class="selection-card">
+            <h4>🏅 Danh hiệu Sinh viên 5 tốt:</h4>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isSv5TotCapTruong" name="isSv5TotCapTruong" />
+              <span>Sinh viên 5 tốt cấp Trường (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isSv5TotCapDhqg" name="isSv5TotCapDhqg" />
+              <span>Sinh viên 5 tốt cấp ĐHQG (0/1)</span>
+            </label>
+            <label class="check-box-label">
+              <input type="checkbox" [(ngModel)]="isSv5TotCapThanhPho" name="isSv5TotCapThanhPho" />
+              <span>Sinh viên 5 tốt cấp Thành phố (0/1)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Form Submit -->
+        <div class="form-actions-bar">
+          <button type="submit" class="btn-submit-survey">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Gửi Khảo Sát & Nhận Mã QR Theo MSSV</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  } @else {
+    <!-- Survey Success & Generated QR Code Display -->
+    @if (submittedDelegate(); as d) {
+      <div class="survey-result-card">
+        <div class="result-header">
+          <div class="success-icon">✓</div>
+          <h2>GỬI KHẢO SÁT THÀNH CÔNG!</h2>
+          <p>Mã QR điểm danh Đại hội đã được tạo tự động dựa trên MSSV của đồng chí</p>
+        </div>
+
+        <div class="result-body">
+          <div class="qr-display-box">
+            @if (generatedQrUrl(); as qr) {
+              <img [src]="qr" [alt]="'QR ' + d.mssv" class="qr-code-img" />
+            }
+            <div class="qr-payload-mssv">
+              Mã QR mã hóa: <strong>{{ d.mssv }}</strong>
+            </div>
+          </div>
+
+          <div class="delegate-summary-panel">
+            <h3>{{ d.fullName }}</h3>
+            <p class="unit-p">{{ d.unit }} • Số thẻ: {{ d.id }}</p>
+
+            <div class="meta-bullets">
+              <div><strong>MSSV:</strong> {{ d.mssv }}</div>
+              <div><strong>Ngày sinh:</strong> {{ d.dob }} ({{ calculatedAge }} tuổi tại ngày 17/01/2027)</div>
+              <div><strong>Giới tính:</strong> {{ d.gender }}</div>
+              <div><strong>Chính trị:</strong> {{ d.isPartyMember === 1 ? 'Đảng viên Đảng CSVN (Đoàn viên)' : 'Đoàn viên TNCS HCM' }}</div>
+              <div><strong>Dân tộc:</strong> {{ d.ethnicity }} • <strong>Tôn giáo:</strong> {{ d.religion }}</div>
+              <div><strong>Trình độ:</strong> {{ d.academicLevel }} • <strong>LLCT:</strong> {{ d.politicalTheory }}</div>
+              <div><strong>Chỗ ngồi dự kiến:</strong> {{ d.seatNumber }}</div>
+            </div>
+
+            <div class="result-buttons">
+              <button type="button" class="btn-action-primary" (click)="downloadQr()">
+                📥 Tải Ảnh Mã QR (PNG) Để Lưu
+              </button>
+              <button type="button" class="btn-action-secondary" (click)="resetForm()">
+                Điền Thêm Phiếu Cho Đại Biểu Khác
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

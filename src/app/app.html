@@ -1,0 +1,224 @@
+<div class="app-shell">
+  <!-- Top Global Header -->
+  <header class="app-header no-print">
+    <div class="header-inner container">
+      <!-- Logo and Titles -->
+      <div class="brand-group" (click)="setTab('scanner')" style="cursor: pointer;">
+        <div class="youth-crest">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" fill="#005baa" stroke="#ffcc00" stroke-width="4"/>
+            <polygon points="50,15 61,38 86,41 68,58 72,83 50,71 28,83 32,58 14,41 39,38" fill="#ffcc00"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-sub">{{ delegateService.congressInfo().organization }}</span>
+          <h1 class="brand-title">HỆ THỐNG QUÉT QR TƯ CÁCH ĐẠI BIỂU</h1>
+          <span class="brand-unit">{{ delegateService.congressInfo().unitName }} • Ngày {{ delegateService.congressInfo().date }}</span>
+        </div>
+      </div>
+
+      <!-- Quick Status & Action Buttons -->
+      <div class="header-right">
+        <!-- Live Attendance Badge -->
+        <div class="live-counter-pill" (click)="setTab('stats')" title="Bấm để xem danh sách chi tiết">
+          <span class="live-pulse"></span>
+          <span class="counter-label">Đã Điểm Danh:</span>
+          <strong class="counter-val">
+            {{ delegateService.checkedInCount() }} / {{ delegateService.totalDelegates() }}
+          </strong>
+          <span class="counter-percent">({{ delegateService.attendancePercentage() }}%)</span>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button
+          type="button"
+          class="head-btn"
+          [class.active]="feedback.isSoundEnabled()"
+          (click)="feedback.toggleSound()"
+          [title]="feedback.isSoundEnabled() ? 'Tắt âm thanh hiệu ứng' : 'Bật âm thanh hiệu ứng'"
+        >
+          @if (feedback.isSoundEnabled()) {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          }
+        </button>
+
+        <!-- Edit Config Button -->
+        <button
+          type="button"
+          class="head-btn"
+          (click)="openConfig()"
+          title="Tùy chỉnh thông tin Đại hội"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Bar (Tabs) -->
+    <nav class="app-nav">
+      <div class="nav-inner container">
+        <button
+          type="button"
+          class="nav-tab"
+          [class.active]="activeTab() === 'scanner'"
+          (click)="setTab('scanner')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Quét QR (MSSV)</span>
+        </button>
+
+        <button
+          type="button"
+          class="nav-tab"
+          [class.active]="activeTab() === 'stats'"
+          (click)="setTab('stats')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span>Thống Kê 100 ĐB & Tiêu Chuẩn</span>
+          <span class="tab-badge">{{ delegateService.totalDelegates() }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="nav-tab"
+          [class.active]="activeTab() === 'badges'"
+          (click)="setTab('badges')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          <span>Mã QR & In Thẻ Đeo</span>
+        </button>
+
+        <button
+          type="button"
+          class="nav-tab"
+          [class.active]="activeTab() === 'survey'"
+          (click)="setTab('survey')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <span>Mẫu Form Khảo Sát 100 ĐB</span>
+        </button>
+
+        <button
+          type="button"
+          class="nav-tab"
+          [class.active]="activeTab() === 'kiosk'"
+          (click)="setTab('kiosk')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span>Màn Hình Máy Chiếu Lễ Tân</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class="app-main container">
+    @switch (activeTab()) {
+      @case ('scanner') {
+        <app-scanner></app-scanner>
+      }
+      @case ('stats') {
+        <app-stats></app-stats>
+      }
+      @case ('badges') {
+        <app-badge-generator></app-badge-generator>
+      }
+      @case ('survey') {
+        <app-survey-form></app-survey-form>
+      }
+      @case ('kiosk') {
+        <app-kiosk-screen></app-kiosk-screen>
+      }
+    }
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="app-footer no-print">
+    <div class="footer-inner container">
+      <div class="footer-left">
+        <strong>{{ delegateService.congressInfo().title }}</strong>
+        <p>{{ delegateService.congressInfo().unitName }} • Ngày tổ chức: 17/01/2027 • Hệ thống điểm danh QR theo MSSV</p>
+      </div>
+      <div class="footer-right">
+        <span>Bản Demo Beta 100 Đại Biểu • Công nghệ Angular</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Edit Congress Configuration Modal -->
+  @if (showConfigModal()) {
+    <div class="modal-backdrop" (click)="closeConfig()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>TÙY CHỈNH THÔNG TIN ĐẠI HỘI</h3>
+          <button class="modal-close-btn" (click)="closeConfig()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="config-form">
+            <div class="form-group">
+              <label>Tên Đại hội</label>
+              <input type="text" [(ngModel)]="editTitle" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Phiên Đại hội / Phụ đề</label>
+              <input type="text" [(ngModel)]="editSubTitle" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Đơn vị tổ chức</label>
+              <input type="text" [(ngModel)]="editUnitName" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Nhiệm kỳ / Thời gian</label>
+              <input type="text" [(ngModel)]="editTerm" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Địa điểm tổ chức</label>
+              <input type="text" [(ngModel)]="editLocation" class="form-control" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeConfig()">Hủy</button>
+          <button type="button" class="btn btn-primary" (click)="saveConfig()">Lưu Thay Đổi</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

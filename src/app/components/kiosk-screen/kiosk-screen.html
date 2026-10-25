@@ -1,0 +1,148 @@
+<div class="kiosk-container">
+  <!-- Top Bar with Congress Title and Fullscreen Button -->
+  <div class="kiosk-top-bar">
+    <div class="kiosk-org-info">
+      <div class="emblem-mini">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="48" fill="#005baa" stroke="#ffcc00" stroke-width="4"/>
+          <polygon points="50,15 61,38 86,41 68,58 72,83 50,71 28,83 32,58 14,41 39,38" fill="#ffcc00"/>
+        </svg>
+      </div>
+      <div>
+        <h2>{{ delegateService.congressInfo().organization }}</h2>
+        <p>{{ delegateService.congressInfo().unitName }} • Ngày {{ delegateService.congressInfo().date }}</p>
+      </div>
+    </div>
+
+    <div class="kiosk-actions">
+      <button class="kiosk-btn" (click)="triggerCelebration()" title="Bắn pháo hoa chào mừng">
+        🎉 Bắn Pháo Hoa
+      </button>
+      <button class="kiosk-btn" (click)="toggleFullscreen()" title="Toàn màn hình máy chiếu">
+        ⛶ Toàn Màn Hình
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Hero Display -->
+  <div class="kiosk-hero">
+    <div class="congress-hero-title">
+      <span class="gold-subtitle">{{ delegateService.congressInfo().term }} • 17/01/2027</span>
+      <h1 class="main-title">{{ delegateService.congressInfo().title }}</h1>
+    </div>
+
+    <!-- Live Welcome Card for Currently Scanned Delegate -->
+    @if (delegateService.currentScannedDelegate(); as d) {
+      <div class="welcome-delegate-card animate-card">
+        <div class="welcome-badge-ribbon">
+          <span>NHIỆT LIỆT CHÀO MỪNG ĐẠI BIỂU THAM DỰ ĐẠI HỘI</span>
+        </div>
+
+        <div class="welcome-grid">
+          <div class="welcome-avatar-box">
+            @if (d.avatarUrl) {
+              <img [src]="d.avatarUrl" [alt]="d.fullName" class="welcome-avatar-img" />
+            } @else {
+              <div class="welcome-avatar-placeholder">{{ d.fullName.charAt(0) }}</div>
+            }
+            <span class="welcome-id-tag">{{ d.id }}</span>
+          </div>
+
+          <div class="welcome-info-box">
+            <div class="welcome-mssv-banner">
+              MSSV: <strong>{{ d.mssv }}</strong>
+            </div>
+
+            <h2 class="welcome-name">{{ d.fullName }}</h2>
+
+            <div class="welcome-unit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+              <span>{{ d.unit }}</span>
+            </div>
+
+            <div class="welcome-tags-row">
+              <span class="tag-pill">{{ calculateAge(d.dob) }} tuổi ({{ formatDob(d.dob) }})</span>
+              <span class="tag-pill">{{ d.gender }}</span>
+              <span class="tag-pill">Dân tộc {{ d.ethnicity }}</span>
+              <span class="tag-pill">Tôn giáo: {{ d.religion }}</span>
+              @if (d.isPartyMember === 1) {
+                <span class="tag-pill tag-politic">⭐ Đảng viên Đảng CSVN</span>
+              } @else {
+                <span class="tag-pill tag-doan">Đoàn viên TNCS HCM</span>
+              }
+              <span class="tag-pill">{{ d.academicLevel }}</span>
+            </div>
+
+            <!-- Key achievements preview -->
+            @if (d.achievements) {
+              <div class="welcome-achieve-preview">
+                @if (d.achievements.isThanhNienLamTheoLoiBac === 1) {
+                  <span class="k-achieve-tag">★ Thanh niên KT-Luật làm theo lời Bác</span>
+                }
+                @if (d.achievements.isCanBoTieuBieu === 1) {
+                  <span class="k-achieve-tag">✓ Cán bộ Đoàn - Hội tiêu biểu</span>
+                }
+                @if (d.achievements.isSv5TotCapThanhPho === 1) {
+                  <span class="k-achieve-tag">🌟 SV 5 tốt cấp Thành phố</span>
+                } @else if (d.achievements.isSv5TotCapDhqg === 1) {
+                  <span class="k-achieve-tag">🏅 SV 5 tốt cấp ĐHQG</span>
+                }
+                @if (d.achievements.isNckhCapTruong === 1) {
+                  <span class="k-achieve-tag">🔬 NCKH cấp Trường</span>
+                }
+              </div>
+            }
+
+            <div class="welcome-seat-stamp">
+              <div class="seat-badge-kiosk">
+                <span class="lbl">VỊ TRÍ CHỖ NGỒI:</span>
+                <span class="val">{{ d.seatNumber || 'Hội trường Lớn' }}</span>
+              </div>
+              <div class="stamp-verified-kiosk">
+                ✓ ĐÃ ĐIỂM DANH HỢP LỆ
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Idle Hall Welcome Display -->
+      <div class="idle-welcome-card">
+        <div class="glowing-crest">
+          <svg viewBox="0 0 100 100" class="crest-svg">
+            <circle cx="50" cy="50" r="48" fill="#005baa" stroke="#ffcc00" stroke-width="3"/>
+            <polygon points="50,15 61,38 86,41 68,58 72,83 50,71 28,83 32,58 14,41 39,38" fill="#ffcc00"/>
+          </svg>
+        </div>
+        <h2>CHÀO MỪNG 100 ĐỒNG CHÍ ĐẠI BIỂU</h2>
+        <p>Vui lòng xuất trình mã QR (MSSV) trên thẻ đại biểu hoặc trên màn hình điện thoại tại bàn tiếp tân</p>
+      </div>
+    }
+
+    <!-- Bottom Real-time Attendance Statistics Bar -->
+    <div class="kiosk-stats-footer">
+      <div class="kiosk-stat-item">
+        <span class="k-num">{{ delegateService.totalDelegates() }}</span>
+        <span class="k-label">Đại biểu triệu tập</span>
+      </div>
+      <div class="kiosk-stat-divider"></div>
+      <div class="kiosk-stat-item text-green">
+        <span class="k-num">{{ delegateService.checkedInCount() }}</span>
+        <span class="k-label">Đã có mặt</span>
+      </div>
+      <div class="kiosk-stat-divider"></div>
+      <div class="kiosk-stat-item text-gold">
+        <span class="k-num">{{ delegateService.attendancePercentage() }}%</span>
+        <span class="k-label">Tỷ lệ tham dự</span>
+      </div>
+      <div class="kiosk-stat-divider"></div>
+      <div class="kiosk-stat-item">
+        <span class="k-num">{{ delegateService.ageStats().averageAge }}</span>
+        <span class="k-label">Tuổi bình quân</span>
+      </div>
+    </div>
+  </div>
+</div>

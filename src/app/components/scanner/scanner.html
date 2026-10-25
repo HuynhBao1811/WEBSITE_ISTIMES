@@ -1,0 +1,375 @@
+<div class="scanner-container">
+  <!-- Notification Banner -->
+  @if (scanNotification(); as notif) {
+    <div class="scan-alert-banner" [class.alert-success]="notif.type === 'success'" [class.alert-warning]="notif.type === 'warning'" [class.alert-error]="notif.type === 'error'">
+      <div class="alert-icon">
+        @if (notif.type === 'success') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        } @else if (notif.type === 'warning') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        }
+      </div>
+      <div class="alert-text">{{ notif.message }}</div>
+      <button class="alert-close" (click)="scanNotification.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- Split Screen or Grid: Scanner Box on Left, Delegate Verification Card on Right -->
+  <div class="scanner-grid">
+    <!-- Scanner Card Box -->
+    <div class="scanner-box-card">
+      <div class="box-header">
+        <div class="box-title">
+          <svg class="box-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <div>
+            <h3>Quét Mã QR Tư Cách Đại Biểu</h3>
+            <span class="sub">Quét mã QR (chứa MSSV) trên thẻ hoặc màn hình điện thoại</span>
+          </div>
+        </div>
+
+        <div class="header-controls">
+          <button
+            type="button"
+            class="btn-show-qr-samples"
+            (click)="openSampleQrModal()"
+            title="Mở hình mã QR mẫu trên màn hình để hướng camera điện thoại quét thử"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>📱 Hiện Mã QR Mẫu Quét Thử</span>
+          </button>
+
+          <button
+            type="button"
+            class="icon-btn"
+            [class.active]="feedback.isSoundEnabled()"
+            (click)="feedback.toggleSound()"
+            [title]="feedback.isSoundEnabled() ? 'Âm thanh: Bật' : 'Âm thanh: Tắt'"
+          >
+            @if (feedback.isSoundEnabled()) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+              </svg>
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Camera Viewport Area -->
+      <div class="viewport-wrapper">
+        <div id="qr-reader-container" class="html5-qr-reader" [class.is-mirrored]="isCameraMirrored()"></div>
+
+        <!-- Inactive Camera Overlay Placeholder -->
+        @if (!isCameraScanning()) {
+          <div class="camera-placeholder">
+            <div class="placeholder-icon-wrap">
+              <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </div>
+            <h4>Camera Điểm Danh Chưa Khởi Động</h4>
+            <p>Bấm nút bên dưới để mở camera quét trực tiếp hoặc chọn ảnh mã QR từ thiết bị</p>
+
+            <div class="placeholder-actions">
+              <button type="button" class="btn-start-camera" (click)="startCamera()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>Bật Camera Quét QR</span>
+              </button>
+
+              <button type="button" class="btn-upload-file" (click)="triggerFileUpload()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>Tải Ảnh Mã QR Lên</span>
+              </button>
+            </div>
+
+            @if (cameraErrorMessage(); as err) {
+              <div class="camera-error-banner">
+                {{ err }}
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Active Camera Overlay with Scanning Target Frame & Laser -->
+        @if (isCameraScanning()) {
+          <div class="active-scan-overlay">
+            <div class="target-frame" [class.success-pulse]="isScanSuccessPulse()">
+              <div class="corner tl"></div>
+              <div class="corner tr"></div>
+              <div class="corner bl"></div>
+              <div class="corner br"></div>
+              <div class="laser-scanner-line"></div>
+            </div>
+            <div class="scan-hint-text">
+              @if (isScanSuccessPulse()) {
+                <span class="scan-captured-text">⚡ ĐÃ NHẬN DIỆN MÃ QR!</span>
+              } @else {
+                <span>Căn chỉnh mã QR vào giữa khung (Quét siêu tốc 25 FPS)</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Scanner Controls Bottom Bar -->
+      <div class="scanner-bottom-controls">
+        @if (isCameraScanning()) {
+          <div class="camera-active-bar">
+            @if (availableCameras().length > 1) {
+              <select
+                class="camera-select"
+                [ngModel]="selectedCameraId()"
+                (ngModelChange)="onCameraChange($event)"
+              >
+                @for (cam of availableCameras(); track cam.id) {
+                  <option [value]="cam.id">{{ cam.label || 'Camera ' + cam.id }}</option>
+                }
+              </select>
+            }
+
+            <!-- Switch Camera: Front / Back -->
+            <button
+              type="button"
+              class="btn-switch-camera"
+              (click)="switchCameraFacing()"
+              title="Đổi camera trước hoặc camera sau"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="3"></circle>
+              </svg>
+              <span>📷 Đổi Cam</span>
+            </button>
+
+            <!-- Toggle Mirror: ScaleX(-1) -->
+            <button
+              type="button"
+              class="btn-toggle-mirror"
+              [class.active]="isCameraMirrored()"
+              (click)="toggleMirror()"
+              [title]="isCameraMirrored() ? 'Camera đang lật gương (Bấm để hủy lật gương)' : 'Bấm để lật ngược gương camera'"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4"></path>
+              </svg>
+              <span>{{ isCameraMirrored() ? '🔄 Đang Lật Gương' : '🔄 Lật Gương' }}</span>
+            </button>
+
+            <button type="button" class="btn-stop-camera" (click)="stopCamera()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="6" y="6" width="12" height="12"></rect>
+              </svg>
+              <span>Dừng Camera</span>
+            </button>
+
+            <button type="button" class="btn-upload-mini" (click)="triggerFileUpload()" title="Chọn ảnh QR khác">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </button>
+          </div>
+        }
+
+        <!-- Hidden file input for QR image upload -->
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          style="display: none"
+          (change)="onFileSelected($event)"
+        />
+
+        <!-- Manual MSSV Input Box -->
+        <div class="manual-input-row">
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              placeholder="Nhập MSSV hoặc Mã ĐB (VD: K224111001, ĐB-001)..."
+              [ngModel]="manualCode()"
+              (ngModelChange)="manualCode.set($event)"
+              (keyup.enter)="onManualSubmit()"
+            />
+          </div>
+          <button type="button" class="btn-manual-submit" (click)="onManualSubmit()">
+            Tra Cứu / Điểm Danh
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Demo Simulation Bar (using MSSV) -->
+      <div class="demo-simulation-section">
+        <div class="demo-header">
+          <span class="demo-badge">⚡ QUÉT THỬ DEMO NHANH (BẰNG MSSV)</span>
+          <span class="demo-sub">Click để thử quét ngay mã QR của các đại biểu trong danh sách 100 đại biểu:</span>
+        </div>
+        <div class="demo-chips-grid">
+          @for (d of delegateService.delegates().slice(0, 10); track d.mssv) {
+            <button
+              type="button"
+              class="chip-btn"
+              [class.checked-chip]="d.checkedIn"
+              (click)="simulateScan(d.mssv)"
+              [title]="'MSSV: ' + d.mssv + ' - ' + d.unit"
+            >
+              <span class="chip-id">{{ d.mssv }}</span>
+              <span class="chip-name">{{ d.fullName }}</span>
+              @if (d.checkedIn) {
+                <span class="chip-check">✓ Đã đến</span>
+              }
+            </button>
+          }
+          <button
+            type="button"
+            class="chip-btn invalid-chip"
+            (click)="simulateScan('K999999999')"
+            title="Thử quét một MSSV không có trong danh sách 100 đại biểu"
+          >
+            <span class="chip-id">K999999999</span>
+            <span class="chip-name">MSSV không tồn tại</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanned Delegate Verification Card Display -->
+    <div class="verification-card-column">
+      @if (delegateService.currentScannedDelegate(); as currentDelegate) {
+        <app-delegate-card
+          [delegate]="currentDelegate"
+          [congressInfo]="delegateService.congressInfo()"
+          (toggleCheckIn)="onToggleCheckIn($event)"
+          (printCard)="onPrintCard($event)"
+          (scanNext)="onScanNext()"
+        ></app-delegate-card>
+      } @else {
+        <!-- Awaiting Scan Placeholder -->
+        <div class="awaiting-card">
+          <div class="awaiting-graphic">
+            <div class="outer-pulse-ring"></div>
+            <div class="awaiting-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <line x1="19" y1="8" x2="19" y2="14"></line>
+                <line x1="22" y1="11" x2="16" y2="11"></line>
+              </svg>
+            </div>
+          </div>
+          <h3>Đang Chờ Quét Thẻ / Mã QR Đại Biểu</h3>
+          <p>
+            Hệ thống sử dụng <strong>Mã Số Sinh Viên (MSSV)</strong> làm trường khóa chính để mã hóa mã QR.
+            Quét mã QR từ thẻ đại biểu hoặc bấm nút ở mục <strong>"Quét Thử Demo Nhanh"</strong> để xem đầy đủ hồ sơ khảo sát và tư cách đại biểu.
+          </p>
+
+          <div class="quick-stats-summary">
+            <div class="mini-stat">
+              <span class="stat-num">{{ delegateService.totalDelegates() }}</span>
+              <span class="stat-lbl">Đại biểu triệu tập</span>
+            </div>
+            <div class="mini-stat text-success">
+              <span class="stat-num">{{ delegateService.checkedInCount() }}</span>
+              <span class="stat-lbl">Đã điểm danh</span>
+            </div>
+            <div class="mini-stat text-warning">
+              <span class="stat-num">{{ delegateService.absentCount() }}</span>
+              <span class="stat-lbl">Chưa có mặt</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Interactive Sample QR Modal For Phone Scanning Test -->
+  @if (showSampleQrModal()) {
+    @if (sampleQrImages()[currentSampleIndex()]; as currentItem) {
+      <div class="modal-backdrop" (click)="closeSampleQrModal()">
+        <div class="modal-card modal-qr-tester" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>📱 HÌNH ẢNH MÃ QR MẪU (QUÉT BẰNG ĐIỆN THOẠI)</h3>
+            <button class="modal-close-btn" (click)="closeSampleQrModal()">✕</button>
+          </div>
+
+          <div class="modal-body text-center">
+            <div class="modal-sample-carousel">
+              <button type="button" class="btn-nav-qr" (click)="prevSampleQr()" title="Mã trước">◀</button>
+
+              <div class="modal-qr-frame">
+                <img [src]="currentItem.qrUrl" [alt]="'Mã QR ' + currentItem.delegate.mssv" class="qr-modal-image" />
+              </div>
+
+              <button type="button" class="btn-nav-qr" (click)="nextSampleQr()" title="Mã tiếp theo">▶</button>
+            </div>
+
+            <div class="mssv-callout">
+              Mã QR mã hóa: <strong>{{ currentItem.delegate.mssv }}</strong> ({{ currentItem.delegate.id }})
+            </div>
+
+            <h4 class="modal-delegate-name">{{ currentItem.delegate.fullName }}</h4>
+            <p class="modal-delegate-unit">{{ currentItem.delegate.unit }}</p>
+
+            <div class="carousel-counter">
+              Đại biểu {{ currentSampleIndex() + 1 }} / {{ sampleQrImages().length }}
+            </div>
+
+            <p class="modal-hint">
+              👉 Hãy mở camera trên điện thoại của bạn hoặc đưa điện thoại hướng vào mã QR trên màn hình này để quét điểm danh trực tiếp!
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeSampleQrModal()">Đóng</button>
+            <button type="button" class="btn btn-download-qr" (click)="downloadCurrentSampleQr()">
+              📥 Tải Ảnh PNG Về Máy
+            </button>
+            <button type="button" class="btn btn-primary" (click)="simulateScan(currentItem.delegate.mssv); closeSampleQrModal()">
+              ⚡ Quét Thử Ngay Bằng Mã Này
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

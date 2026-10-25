@@ -1,0 +1,633 @@
+.delegate-card-wrapper {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 45px rgba(0, 59, 115, 0.15), 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 91, 170, 0.15);
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.delegate-card-wrapper:hover {
+  box-shadow: 0 24px 55px rgba(0, 59, 115, 0.22);
+}
+
+/* Card Top Banner */
+.card-top-banner {
+  background: linear-gradient(135deg, #003b73 0%, #005baa 65%, #0077cc 100%);
+  color: #ffffff;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  border-bottom: 3px solid #ffcc00;
+}
+
+.banner-emblem {
+  flex-shrink: 0;
+}
+
+.youth-logo {
+  width: 46px;
+  height: 46px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 3px;
+}
+
+.logo-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.banner-titles {
+  flex: 1;
+}
+
+.org-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #ffdd44;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.unit-title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.congress-title {
+  font-size: 0.76rem;
+  margin: 3px 0 0 0;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Status Pill */
+.badge-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.badge-status-pill.verified {
+  background: rgba(46, 204, 113, 0.2);
+  border: 1px solid #2ecc71;
+  color: #2ecc71;
+}
+
+.badge-status-pill.pending {
+  background: rgba(243, 156, 18, 0.2);
+  border: 1px solid #f39c12;
+  color: #f39c12;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+/* Verification Stamp */
+.verification-stamp-area {
+  position: absolute;
+  top: 75px;
+  right: 24px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.stamp-box {
+  width: 140px;
+  height: 140px;
+  border: 3.5px dashed #da251d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #da251d;
+  transform: rotate(-18deg) scale(0.85);
+  opacity: 0.2;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.stamp-box.stamped {
+  opacity: 0.9;
+  transform: rotate(-14deg) scale(1);
+  animation: stampImpact 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+@keyframes stampImpact {
+  0% { transform: rotate(-30deg) scale(2.2); opacity: 0; }
+  60% { transform: rotate(-10deg) scale(0.95); opacity: 1; }
+  100% { transform: rotate(-14deg) scale(1); opacity: 0.9; }
+}
+
+.stamp-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stamp-star {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+}
+
+.stamp-text {
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  margin: 2px 0;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.stamp-sub {
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.stamp-code {
+  font-size: 0.65rem;
+  font-weight: 800;
+  margin-top: 2px;
+  border-top: 1px solid #da251d;
+  padding-top: 2px;
+}
+
+/* Card Main Content */
+.card-main-content {
+  padding: 22px 26px 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-header-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.avatar-container {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  flex-shrink: 0;
+}
+
+.delegate-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 3px solid #005baa;
+  box-shadow: 0 8px 18px rgba(0, 91, 170, 0.2);
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #005baa 0%, #003b73 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  border: 3px solid #ffcc00;
+}
+
+.delegate-id-badge {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #da251d;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+}
+
+.name-unit-box {
+  flex: 1;
+}
+
+.mssv-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eef5fc;
+  color: #005baa;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  border: 1px solid rgba(0, 91, 170, 0.2);
+}
+
+.delegate-fullname {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  line-height: 1.25;
+}
+
+.delegate-branch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: #005baa;
+  flex-wrap: wrap;
+}
+
+.seat-tag {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #a7f3d0;
+}
+
+.icon-inline {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 14px;
+  background: #f8fafc;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 18px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detail-item.full-width {
+  grid-column: span 2;
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.highlight-text {
+  color: #005baa;
+  font-weight: 700;
+}
+
+.age-badge {
+  background: #e0f2fe;
+  color: #0284c7;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+.gender-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.gender-pill.male {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.gender-pill.female {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.badge-minority {
+  background: #fef3c7;
+  color: #d97706;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.politic-pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.politic-pill.party-member {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.politic-pill.doan-vien {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.academic-badge {
+  color: #4338ca;
+  font-weight: 700;
+}
+
+.llct-badge {
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.time-value {
+  color: #475569;
+  font-size: 0.84rem;
+}
+
+/* Achievements Section */
+.achievements-section {
+  background: #fffdf5;
+  border: 1px solid #fef08a;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.achieve-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #854d0e;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.text-gold {
+  color: #eab308;
+}
+
+.achieve-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.achieve-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  line-height: 1.2;
+}
+
+.badge-blue {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.badge-red {
+  background: #ffe4e6;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+
+.badge-gold {
+  background: #fef9c3;
+  color: #854d0e;
+  border: 1px solid #fde047;
+}
+
+.badge-green {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.badge-purple {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+.badge-cyan {
+  background: #ccfbf1;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+}
+
+/* Card Action Footer */
+.card-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.btn-checkin {
+  flex: 2;
+  background: linear-gradient(135deg, #005baa 0%, #003b73 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 91, 170, 0.3);
+}
+
+.btn-checkin:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 91, 170, 0.4);
+}
+
+.btn-checkin.btn-checked {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.btn-print {
+  flex: 1;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-print:hover {
+  background: #e2e8f0;
+}
+
+.btn-next {
+  background: #f8fafc;
+  color: #005baa;
+  border: 1px solid #bfdbfe;
+}
+
+.btn-next:hover {
+  background: #eff6ff;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .card-top-banner {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .unit-title {
+    font-size: 0.9rem;
+  }
+  .verification-stamp-area {
+    top: 50px;
+    right: 12px;
+  }
+  .stamp-box {
+    width: 95px;
+    height: 95px;
+    border-width: 2.5px;
+  }
+  .stamp-star {
+    font-size: 0.55rem;
+  }
+  .stamp-text {
+    font-size: 0.55rem;
+  }
+  .stamp-sub {
+    font-size: 0.45rem;
+  }
+  .stamp-code {
+    font-size: 0.52rem;
+  }
+  .card-main-content {
+    padding: 16px 14px 14px;
+  }
+  .profile-header-row {
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .avatar-container {
+    width: 72px;
+    height: 72px;
+  }
+  .delegate-name {
+    font-size: 1.25rem;
+  }
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .detail-item.full-width {
+    grid-column: span 1;
+  }
+  .achieve-pill {
+    font-size: 0.72rem;
+    padding: 4px 8px;
+  }
+  .card-footer-actions {
+    flex-direction: column;
+    padding: 12px 14px;
+    gap: 8px;
+  }
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .profile-header-row {
+    flex-direction: column;
+    text-align: center;
+  }
+  .name-unit-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+

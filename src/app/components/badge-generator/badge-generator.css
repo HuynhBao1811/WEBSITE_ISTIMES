@@ -1,0 +1,460 @@
+.badge-generator-container {
+  width: 100%;
+}
+
+/* Controls Bar */
+.controls-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.controls-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.control-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.delegate-select {
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+  min-width: 320px;
+}
+
+.controls-right {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-download-qr-btn {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.btn-download-qr-btn:hover {
+  background: #d1fae5;
+}
+
+.btn-prepare-all {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-prepare-all:hover {
+  background: #e2e8f0;
+}
+
+.btn-print-main {
+  background: linear-gradient(135deg, #005baa 0%, #003b73 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 91, 170, 0.3);
+}
+
+.btn-print-main:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 91, 170, 0.4);
+}
+
+/* Lanyard Visual Strap */
+.single-badge-viewport {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 40px;
+}
+
+.lanyard-strap {
+  width: 38px;
+  height: 60px;
+  background: repeating-linear-gradient(
+    45deg,
+    #005baa,
+    #005baa 10px,
+    #003b73 10px,
+    #003b73 20px
+  );
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.lanyard-clip {
+  width: 24px;
+  height: 16px;
+  background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+  border-radius: 3px;
+  margin-bottom: -8px;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.badge-slot {
+  width: 18px;
+  height: 5px;
+  background: #1e293b;
+  border-radius: 3px;
+  margin-bottom: -12px;
+  z-index: 3;
+}
+
+/* Physical Badge Card */
+.physical-badge {
+  width: 350px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  position: relative;
+}
+
+.badge-header {
+  background: linear-gradient(135deg, #003b73 0%, #005baa 100%);
+  color: #ffffff;
+  padding: 16px 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #ffcc00;
+}
+
+.badge-emblem-wrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.badge-emblem-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.badge-header-texts {
+  text-align: left;
+  flex: 1;
+}
+
+.sub-header {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #ffdd44;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: block;
+}
+
+.unit-header {
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin: 1px 0;
+  line-height: 1.2;
+}
+
+.term-header {
+  font-size: 0.68rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.badge-title-banner {
+  background: #da251d;
+  color: #ffffff;
+  padding: 6px;
+  border-bottom: 2px solid #ffcc00;
+}
+
+.badge-title-banner h2 {
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.badge-profile-content {
+  padding: 16px 18px;
+}
+
+.badge-avatar-wrap {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 8px;
+}
+
+.badge-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2.5px solid #005baa;
+}
+
+.badge-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: #005baa;
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-id-box {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #003b73;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.badge-mssv-tag {
+  display: inline-block;
+  background: #eef5fc;
+  color: #005baa;
+  font-size: 0.82rem;
+  padding: 2px 10px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 3px 0;
+}
+
+.badge-unit {
+  font-size: 0.85rem;
+  color: #005baa;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+}
+
+.badge-meta-tags {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  font-size: 0.68rem;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #475569;
+}
+
+.badge-political-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.party-flag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.doan-flag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.academic-flag {
+  font-size: 0.7rem;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge-qr-container {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px;
+  width: 146px;
+  margin: 0 auto 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.badge-qr-img {
+  width: 130px;
+  height: 130px;
+}
+
+.qr-scan-guide {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #005baa;
+  margin-top: 3px;
+}
+
+.badge-seat-info {
+  font-size: 0.8rem;
+  color: #059669;
+  font-weight: 700;
+}
+
+.badge-footer {
+  background: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  padding: 6px;
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Bulk Badges Sheet */
+.all-mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.badges-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.bulk-card {
+  margin: 0 auto;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .controls-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .controls-left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .delegate-select {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .controls-right {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .badges-sheet {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .physical-badge {
+    max-width: 100%;
+  }
+}
+
+/* PRINT MEDIA STYLES */
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .physical-badge {
+    box-shadow: none !important;
+    border: 1px solid #000000 !important;
+    page-break-inside: avoid;
+    margin: 10px auto;
+  }
+
+  .badges-sheet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+

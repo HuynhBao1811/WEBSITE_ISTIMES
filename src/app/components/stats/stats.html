@@ -1,0 +1,729 @@
+<div class="stats-container">
+  <!-- Section 1: Age & Overall Attendance Banner (Calculated on 17/01/2027) -->
+  <div class="congress-date-banner">
+    <div class="date-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <span>NGÀY TỔ CHỨC ĐẠI HỘI: <strong>17/01/2027</strong></span>
+    </div>
+    <div class="date-note">
+      * Độ tuổi của toàn bộ 100 đại biểu được tính toán chính xác dựa trên Ngày sinh (DOB) tại thời điểm khai mạc Đại hội ngày 17/01/2027.
+    </div>
+  </div>
+
+  <!-- Age Analysis Highlight Cards (Min, Max, Average Age) -->
+  <div class="age-analysis-grid">
+    <!-- Average Age -->
+    <div class="age-card card-avg">
+      <div class="age-icon">📊</div>
+      <div class="age-content">
+        <span class="age-label">Độ Tuổi Bình Quân</span>
+        <h2 class="age-value">{{ delegateService.ageStats().averageAge }} <span class="unit">tuổi</span></h2>
+        <span class="age-desc">Tuổi trung bình của 100 đại biểu triệu tập</span>
+      </div>
+    </div>
+
+    <!-- Youngest Delegate -->
+    <div class="age-card card-min">
+      <div class="age-icon">🌱</div>
+      <div class="age-content">
+        <span class="age-label">Đại Biểu Nhỏ Tuổi Nhất</span>
+        <h2 class="age-value text-green">
+          {{ delegateService.ageStats().minAge }} <span class="unit">tuổi</span>
+        </h2>
+        @if (delegateService.ageStats().youngest; as y) {
+          <div class="person-tag" (click)="selectForVerification(y)" title="Bấm xem hồ sơ">
+            <strong>{{ y.fullName }}</strong> (MSSV: {{ y.mssv }})
+            <span class="person-sub">{{ y.unit }} • Sinh ngày: {{ formatDob(y.dob) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Oldest Delegate -->
+    <div class="age-card card-max">
+      <div class="age-icon">🌳</div>
+      <div class="age-content">
+        <span class="age-label">Đại Biểu Lớn Tuổi Nhất</span>
+        <h2 class="age-value text-orange">
+          {{ delegateService.ageStats().maxAge }} <span class="unit">tuổi</span>
+        </h2>
+        @if (delegateService.ageStats().oldest; as o) {
+          <div class="person-tag" (click)="selectForVerification(o)" title="Bấm xem hồ sơ">
+            <strong>{{ o.fullName }}</strong> (MSSV: {{ o.mssv }})
+            <span class="person-sub">{{ o.unit }} • Sinh ngày: {{ formatDob(o.dob) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Attendance Rate -->
+    <div class="age-card card-attendance">
+      <div class="attendance-ring">
+        <span class="ring-val">{{ delegateService.attendancePercentage() }}%</span>
+      </div>
+      <div class="age-content">
+        <span class="age-label">Tiến Độ Điểm Danh</span>
+        <h2 class="age-value text-blue">
+          {{ delegateService.checkedInCount() }} / {{ delegateService.totalDelegates() }}
+        </h2>
+        <span class="age-desc">Đã có mặt tại hội trường</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Sum-up of 0/1 Achievement Variables (Mỗi hạng mục tổng bao nhiêu đồng chí) -->
+  <div class="achievements-sumup-card">
+    <div class="card-header-bar">
+      <div class="title-with-badge">
+        <h3>TỔNG HỢP TIÊU CHUẨN & THÀNH TÍCH ĐẠI BIỂU (SUM UP TỪ KHẢO SÁT FORM)</h3>
+        <span class="badge-count">100 Đại Biểu Triệu Tập</span>
+      </div>
+      <span class="sub-explain">Tất cả các biến dưới đây là giá trị 0/1 được tổng hợp tự động:</span>
+    </div>
+
+    <div class="achievement-categories-grid">
+      <!-- Category 1: Thành tích công tác Đoàn - Hội -->
+      <div class="category-box">
+        <div class="category-header header-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+          </svg>
+          <h4>Công Tác Đoàn - Hội</h4>
+        </div>
+        <div class="category-items">
+          <div class="stat-row">
+            <span class="stat-name">Đoàn viên tiêu biểu:</span>
+            <span class="stat-val-badge badge-blue">{{ delegateService.achievementsStats().doanVienTieuBieu }} đồng chí</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Cán bộ Đoàn - Hội tiêu biểu:</span>
+            <span class="stat-val-badge badge-blue">{{ delegateService.achievementsStats().canBoTieuBieu }} đồng chí</span>
+          </div>
+          <div class="stat-row highlight-row">
+            <span class="stat-name">Thanh niên KT-Luật làm theo lời Bác:</span>
+            <span class="stat-val-badge badge-red">{{ delegateService.achievementsStats().thanhNienLamTheoLoiBac }} đồng chí</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">BTV Thành Đoàn TP. Hồ Chí Minh:</span>
+            <span class="stat-val-badge badge-red">{{ delegateService.achievementsStats().btvThanhDoan }} đồng chí</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Bằng khen từ Trung ương Đoàn:</span>
+            <span class="stat-val-badge badge-gold">{{ delegateService.achievementsStats().bangKhenTWDoan }} đồng chí</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category 2: Học tập & Nghiên cứu khoa học -->
+      <div class="category-box">
+        <div class="category-header header-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+          <h4>Học Tập & Nghiên Cứu Khoa Học</h4>
+        </div>
+        <div class="category-items">
+          <div class="stat-row">
+            <span class="stat-name">Tham gia NCKH cấp Trường:</span>
+            <span class="stat-val-badge badge-green">{{ delegateService.achievementsStats().nckhCapTruong }} đồng chí</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Đạt giải cuộc thi học thuật:</span>
+            <span class="stat-val-badge badge-green">{{ delegateService.achievementsStats().datGiaiHocThuat }} đồng chí</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="category-mini-title">🎭 Hoạt Động Văn Thể Mỹ</div>
+          <div class="stat-row">
+            <span class="stat-name">Tích cực tham gia Văn thể mỹ:</span>
+            <span class="stat-val-badge badge-purple">{{ delegateService.achievementsStats().vanTheMy }} đồng chí</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category 3: Sinh viên 5 tốt -->
+      <div class="category-box">
+        <div class="category-header header-gold">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <h4>Danh Hiệu Sinh Viên 5 Tốt</h4>
+        </div>
+        <div class="category-items">
+          <div class="stat-row">
+            <span class="stat-name">Sinh viên 5 tốt cấp Trường:</span>
+            <span class="stat-val-badge badge-cyan">{{ delegateService.achievementsStats().sv5TotCapTruong }} đồng chí</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Sinh viên 5 tốt cấp ĐHQG:</span>
+            <span class="stat-val-badge badge-cyan">{{ delegateService.achievementsStats().sv5TotCapDhqg }} đồng chí</span>
+          </div>
+          <div class="stat-row highlight-row">
+            <span class="stat-name">Sinh viên 5 tốt cấp Thành phố:</span>
+            <span class="stat-val-badge badge-gold">{{ delegateService.achievementsStats().sv5TotCapThanhPho }} đồng chí</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Demographics Breakdown (Đảng viên, Dân tộc, Tôn giáo, Chuyên môn, LLCT) -->
+  <div class="demographics-grid">
+    <!-- Đảng viên & Đoàn viên -->
+    <div class="demo-card">
+      <h5>⭐ Đảng Viên / Đoàn Viên</h5>
+      <div class="demo-pills">
+        <div class="pill-item party">
+          <span class="pill-lbl">Đảng viên Đảng CSVN:</span>
+          <strong>{{ delegateService.partyMembersCount() }} đồng chí</strong>
+          <span class="pill-sub">({{ Math.round((delegateService.partyMembersCount() / delegateService.totalDelegates()) * 100) }}%)</span>
+        </div>
+        <div class="pill-item doan">
+          <span class="pill-lbl">Đoàn viên TNCS HCM:</span>
+          <strong>{{ delegateService.totalYouthUnionCount() }} đồng chí</strong>
+          <span class="pill-sub">(100%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dân tộc -->
+    <div class="demo-card">
+      <h5>🇻🇳 Cơ Cấu Dân Tộc</h5>
+      <div class="demo-tags-list">
+        <span class="tag-stat">Kinh: <strong>{{ delegateService.ethnicityStats().kinh }}</strong></span>
+        <span class="tag-stat">Hoa: <strong>{{ delegateService.ethnicityStats().hoa }}</strong></span>
+        <span class="tag-stat">Chăm: <strong>{{ delegateService.ethnicityStats().cham }}</strong></span>
+        <span class="tag-stat">Khác: <strong>{{ delegateService.ethnicityStats().khac }}</strong></span>
+      </div>
+    </div>
+
+    <!-- Tôn giáo -->
+    <div class="demo-card">
+      <h5>🕊️ Tôn Giáo</h5>
+      <div class="demo-tags-list">
+        <span class="tag-stat">Không: <strong>{{ delegateService.religionStats().khong }}</strong></span>
+        <span class="tag-stat">Phật giáo: <strong>{{ delegateService.religionStats().phatGiao }}</strong></span>
+        <span class="tag-stat">Công giáo: <strong>{{ delegateService.religionStats().congGiao }}</strong></span>
+        <span class="tag-stat">Tin lành: <strong>{{ delegateService.religionStats().tinLanh }}</strong></span>
+        <span class="tag-stat">Hòa Hảo: <strong>{{ delegateService.religionStats().hoaHao }}</strong></span>
+        <span class="tag-stat">Khác: <strong>{{ delegateService.religionStats().khac }}</strong></span>
+      </div>
+    </div>
+
+    <!-- Trình độ & LLCT -->
+    <div class="demo-card">
+      <h5>🎓 Trình Độ & Lý Luận Chính Trị</h5>
+      <div class="demo-tags-list">
+        <span class="tag-stat">Đang học ĐH: <strong>{{ delegateService.academicStats().dangHocDh }}</strong></span>
+        <span class="tag-stat">Thạc sĩ: <strong>{{ delegateService.academicStats().thacSi }}</strong></span>
+        <span class="tag-stat">Tiến sĩ: <strong>{{ delegateService.academicStats().tienSi }}</strong></span>
+        <span class="tag-stat tag-teal">LLCT: Cao cấp ({{ delegateService.politicalTheoryStats().caoCap }}), Trung cấp ({{ delegateService.politicalTheoryStats().trungCap }}), Sơ cấp ({{ delegateService.politicalTheoryStats().soCap }})</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: 100 Delegates Directory Table with MSSV Search & Filter -->
+  <div class="directory-card">
+    <div class="directory-toolbar">
+      <div class="search-filter-group">
+        <!-- Search by MSSV or Name -->
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            placeholder="Tìm theo MSSV (VD: K22411...), Họ tên..."
+            [ngModel]="searchQuery()"
+            (ngModelChange)="searchQuery.set($event)"
+          />
+          @if (searchQuery()) {
+            <button class="clear-search" (click)="searchQuery.set('')">✕</button>
+          }
+        </div>
+
+        <!-- Filter by Unit -->
+        <select
+          class="filter-select"
+          [ngModel]="selectedUnit()"
+          (ngModelChange)="selectedUnit.set($event)"
+        >
+          <option value="ALL">Tất cả Chi đoàn ({{ delegateService.unitsList().length }})</option>
+          @for (unit of delegateService.unitsList(); track unit) {
+            <option [value]="unit">{{ unit }}</option>
+          }
+        </select>
+
+        <!-- Filter by Status -->
+        <select
+          class="filter-select"
+          [ngModel]="selectedStatus()"
+          (ngModelChange)="selectedStatus.set($event)"
+        >
+          <option value="ALL">Tất cả trạng thái điểm danh</option>
+          <option value="CHECKED">Đã điểm danh ({{ delegateService.checkedInCount() }})</option>
+          <option value="ABSENT">Chưa có mặt ({{ delegateService.absentCount() }})</option>
+        </select>
+
+        <!-- Filter by Party -->
+        <select
+          class="filter-select"
+          [ngModel]="selectedParty()"
+          (ngModelChange)="selectedParty.set($event)"
+        >
+          <option value="ALL">Đảng viên & Đoàn viên</option>
+          <option value="PARTY">Chỉ Đảng viên ({{ delegateService.partyMembersCount() }})</option>
+          <option value="DOAN">Chỉ Đoàn viên ({{ delegateService.totalDelegates() - delegateService.partyMembersCount() }})</option>
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="toolbar-actions">
+        <button type="button" class="btn-tool btn-add" (click)="openAddModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Thêm Đại Biểu</span>
+        </button>
+
+        <!-- Hidden JSON File Input -->
+        <input
+          #jsonFileInput
+          type="file"
+          accept=".json,application/json"
+          style="display: none"
+          (change)="onJsonFileSelected($event)"
+        />
+
+        <button type="button" class="btn-tool btn-export" (click)="exportJson()" title="Sao lưu toàn bộ Database 100 đại biểu sang file JSON">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Sao Lưu JSON</span>
+        </button>
+
+        <button type="button" class="btn-tool btn-export" (click)="jsonFileInput.click()" title="Phục hồi database từ file JSON đã lưu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>Phục Hồi JSON</span>
+        </button>
+
+        <button type="button" class="btn-tool btn-export" (click)="exportCsv()" title="Tải file CSV danh sách 100 đại biểu và biến 0/1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>Xuất CSV Excel</span>
+        </button>
+
+        <button type="button" class="btn-tool btn-reset" (click)="resetAllCheckIns()" title="Đặt lại trạng thái điểm danh">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <polyline points="23 20 23 14 17 14"></polyline>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+          </svg>
+          <span>Reset Điểm Danh</span>
+        </button>
+
+        <button type="button" class="btn-tool btn-reset" (click)="resetToDefaults()" title="Khôi phục lại danh sách 100 đại biểu chuẩn ban đầu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          <span>Về 100 ĐB Mẫu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Table of Delegates -->
+    <div class="table-responsive">
+      <table class="delegates-table">
+        <thead>
+          <tr>
+            <th class="th-code">STT</th>
+            <th class="th-mssv">MSSV (Khóa QR)</th>
+            <th class="th-name">Họ và Tên</th>
+            <th class="th-unit">Chi đoàn</th>
+            <th class="th-dob">DOB / Tuổi (17/01/2027)</th>
+            <th class="th-gender">Giới tính</th>
+            <th class="th-politic">Đảng viên (0/1)</th>
+            <th class="th-ethnicity">Dân tộc / Tôn giáo</th>
+            <th class="th-achievements">Thành Tích Tiêu Biểu (0/1)</th>
+            <th class="th-status">Điểm Danh</th>
+            <th class="th-actions">Thao Tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of filteredDelegates(); track d.mssv) {
+            <tr [class.row-checked]="d.checkedIn">
+              <td class="cell-code">{{ d.id }}</td>
+
+              <!-- MSSV Column: Main QR Key -->
+              <td class="cell-mssv">
+                <span class="mssv-tag" (click)="openQrModal(d)" title="Bấm xem mã QR của MSSV này">
+                  {{ d.mssv }}
+                </span>
+              </td>
+
+              <!-- Name & Avatar -->
+              <td class="cell-name">
+                <div class="name-col-wrap">
+                  @if (d.avatarUrl) {
+                    <img [src]="d.avatarUrl" [alt]="d.fullName" class="mini-avatar" />
+                  } @else {
+                    <div class="mini-placeholder">{{ d.fullName.charAt(0) }}</div>
+                  }
+                  <div>
+                    <strong class="delegate-name-link" (click)="selectForVerification(d)">{{ d.fullName }}</strong>
+                    <span class="sub-type">{{ d.academicLevel }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Chi đoàn -->
+              <td class="cell-unit">
+                <span class="unit-badge">{{ d.unit }}</span>
+              </td>
+
+              <!-- DOB & Calculated Age -->
+              <td class="cell-dob">
+                <div class="dob-wrap">
+                  <span class="dob-date">{{ formatDob(d.dob) }}</span>
+                  <span class="age-pill">{{ calculateAge(d.dob) }} tuổi</span>
+                </div>
+              </td>
+
+              <!-- Giới tính -->
+              <td class="cell-gender">
+                <span class="gender-pill" [class.male]="d.gender === 'Nam'" [class.female]="d.gender === 'Nữ'">
+                  {{ d.gender }}
+                </span>
+              </td>
+
+              <!-- Đảng viên (0/1) -->
+              <td class="cell-politic">
+                @if (d.isPartyMember === 1) {
+                  <span class="badge-party">⭐ Đảng viên (1)</span>
+                } @else {
+                  <span class="badge-doan">Đoàn viên (0)</span>
+                }
+              </td>
+
+              <!-- Dân tộc / Tôn giáo -->
+              <td class="cell-ethnicity">
+                <span class="eth-val">{{ d.ethnicity }}</span>
+                <span class="rel-val">{{ d.religion }}</span>
+              </td>
+
+              <!-- Achievements preview badges -->
+              <td class="cell-achieve">
+                <div class="achieve-mini-tags">
+                  @if (d.achievements?.isThanhNienLamTheoLoiBac === 1) {
+                    <span class="tag-micro badge-red" title="Thanh niên KT-Luật làm theo lời Bác">★ KT-Luật Bác</span>
+                  }
+                  @if (d.achievements?.isCanBoTieuBieu === 1) {
+                    <span class="tag-micro badge-blue" title="Cán bộ Đoàn - Hội tiêu biểu">✓ CB Tiêu biểu</span>
+                  }
+                  @if (d.achievements?.isNckhCapTruong === 1) {
+                    <span class="tag-micro badge-green" title="NCKH cấp Trường">🔬 NCKH</span>
+                  }
+                  @if (d.achievements?.isSv5TotCapThanhPho === 1) {
+                    <span class="tag-micro badge-gold" title="SV 5 tốt cấp Thành phố">🌟 SV5T TP</span>
+                  } @else if (d.achievements?.isSv5TotCapDhqg === 1) {
+                    <span class="tag-micro badge-cyan" title="SV 5 tốt cấp ĐHQG">🏅 SV5T ĐHQG</span>
+                  } @else if (d.achievements?.isSv5TotCapTruong === 1) {
+                    <span class="tag-micro badge-cyan" title="SV 5 tốt cấp Trường">🏅 SV5T Trường</span>
+                  }
+                  @if (d.achievements?.isVanTheMy === 1) {
+                    <span class="tag-micro badge-purple" title="Văn thể mỹ">🎭 VTM</span>
+                  }
+                </div>
+              </td>
+
+              <!-- Status toggle -->
+              <td class="cell-status">
+                <button
+                  type="button"
+                  class="status-toggle-btn"
+                  [class.is-checked]="d.checkedIn"
+                  (click)="onToggle(d.mssv)"
+                  [title]="d.checkedIn ? 'Bấm để hủy điểm danh' : 'Bấm để điểm danh thủ công'"
+                >
+                  <span class="status-indicator"></span>
+                  <span class="status-name">{{ d.checkedIn ? 'Đã đến' : 'Vắng' }}</span>
+                </button>
+                @if (d.checkInTime) {
+                  <span class="checkin-time-micro">{{ d.checkInTime.split(' - ')[0] }}</span>
+                }
+              </td>
+
+              <!-- Actions -->
+              <td class="cell-actions">
+                <button
+                  type="button"
+                  class="action-btn btn-view-card"
+                  (click)="selectForVerification(d)"
+                  title="Xem thẻ tư cách đại biểu"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  class="action-btn btn-view-qr"
+                  (click)="openQrModal(d)"
+                  title="Xem mã QR MSSV của đại biểu"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="11" class="empty-state-cell">
+                <div class="empty-message">
+                  <h4>Không tìm thấy đại biểu phù hợp</h4>
+                  <p>Hãy thử tìm kiếm với từ khóa MSSV khác hoặc xóa bộ lọc Chi đoàn.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table Footer with Summary -->
+    <div class="directory-footer">
+      <span>Hiển thị <strong>{{ filteredDelegates().length }}</strong> / {{ delegateService.totalDelegates() }} đại biểu</span>
+      <span class="footer-tip">💡 Mã QR của đại biểu được tạo trực tiếp từ MSSV để gửi đi cho các đại biểu</span>
+    </div>
+  </div>
+
+  <!-- QR Code Modal Dialog (with Download PNG) -->
+  @if (previewDelegate(); as d) {
+    <div class="modal-backdrop" (click)="closeQrModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>MÃ QR ĐẠI BIỂU (MSSV: {{ d.mssv }})</h3>
+          <button class="modal-close-btn" (click)="closeQrModal()">✕</button>
+        </div>
+
+        <div class="modal-body text-center">
+          <div class="modal-qr-frame">
+            @if (previewQrUrl(); as qrUrl) {
+              <img [src]="qrUrl" alt="Mã QR MSSV" class="qr-modal-image" />
+            } @else {
+              <div class="qr-loading">Đang nạp mã QR...</div>
+            }
+          </div>
+
+          <div class="mssv-callout">
+            MSSV: <strong>{{ d.mssv }}</strong>
+          </div>
+
+          <h4 class="modal-delegate-name">{{ d.fullName }}</h4>
+          <p class="modal-delegate-unit">{{ d.unit }} • {{ d.seatNumber }}</p>
+          <div class="modal-delegate-meta">
+            <span>DOB: {{ formatDob(d.dob) }} ({{ calculateAge(d.dob) }} tuổi tại 17/01/2027)</span> •
+            <span>DT: {{ d.ethnicity }}</span> •
+            <span>{{ d.gender }}</span>
+          </div>
+
+          <p class="modal-hint">
+            Mã QR này chứa trực tiếp MSSV của đồng chí. Bạn có thể tải hình ảnh về để gửi email/Zalo mời tham dự Đại hội!
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeQrModal()">Đóng</button>
+          <button type="button" class="btn btn-download-qr" (click)="downloadQr(d)">
+            📥 Tải Mã QR PNG
+          </button>
+          <button type="button" class="btn btn-primary" (click)="selectForVerification(d); closeQrModal()">
+            Xem Thẻ Thẩm Tra
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Add New Delegate Modal Form -->
+  @if (showAddModal()) {
+    <div class="modal-backdrop" (click)="closeAddModal()">
+      <div class="modal-card modal-large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>THÊM ĐẠI BIỂU TRIỆU TẬP MỚI</h3>
+          <button class="modal-close-btn" (click)="closeAddModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>MSSV (Mã số sinh viên - Dùng tạo QR) *</label>
+              <input type="text" [(ngModel)]="newMssv" placeholder="VD: K224111234" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Họ và Tên *</label>
+              <input type="text" [(ngModel)]="newFullName" placeholder="VD: Nguyễn Văn An" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Chi đoàn *</label>
+              <input type="text" [(ngModel)]="newUnit" placeholder="VD: Chi đoàn K22401" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Ngày sinh (DOB) *</label>
+              <input type="date" [(ngModel)]="newDob" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Giới tính *</label>
+              <select [(ngModel)]="newGender" class="form-control">
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Đảng viên (0/1) *</label>
+              <select [(ngModel)]="newIsPartyMember" class="form-control">
+                <option [ngValue]="0">0 - Không phải Đảng viên (Là Đoàn viên)</option>
+                <option [ngValue]="1">1 - Là Đảng viên (Là Đoàn viên luôn)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Dân tộc *</label>
+              <select [(ngModel)]="newEthnicity" class="form-control">
+                <option value="Kinh">Kinh</option>
+                <option value="Hoa">Hoa</option>
+                <option value="Chăm">Chăm</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Tôn giáo *</label>
+              <select [(ngModel)]="newReligion" class="form-control">
+                <option value="Không">Không</option>
+                <option value="Phật giáo">Phật giáo</option>
+                <option value="Công giáo">Công giáo</option>
+                <option value="Tin lành">Tin lành</option>
+                <option value="Hòa Hảo">Hòa Hảo</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Trình độ chuyên môn *</label>
+              <select [(ngModel)]="newAcademicLevel" class="form-control">
+                <option value="Đang học ĐH">Đang học ĐH</option>
+                <option value="Thạc sĩ">Thạc sĩ</option>
+                <option value="Tiến sĩ">Tiến sĩ</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Lý luận chính trị *</label>
+              <select [(ngModel)]="newPoliticalTheory" class="form-control">
+                <option value="Hoàn thành các bài LLCT">Hoàn thành các bài LLCT</option>
+                <option value="Sơ cấp">Sơ cấp</option>
+                <option value="Trung cấp">Trung cấp</option>
+                <option value="Cao cấp">Cao cấp</option>
+              </select>
+            </div>
+
+            <div class="form-group full-col">
+              <label>Vị trí ghế ngồi trong hội trường</label>
+              <input type="text" [(ngModel)]="newSeatNumber" placeholder="VD: Dãy E - Ghế 05" class="form-control" />
+            </div>
+
+            <!-- Checkbox 0/1 fields -->
+            <div class="form-group full-col">
+              <label class="section-label">Thành tích & Danh hiệu (0/1):</label>
+              <div class="checkbox-grid">
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newDoanVienTieuBieu" />
+                  <span>Đoàn viên tiêu biểu</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newCanBoTieuBieu" />
+                  <span>Cán bộ Đoàn - Hội tiêu biểu</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newThanhNienLamTheoLoiBac" />
+                  <span>Thanh niên KT-Luật làm theo lời Bác</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newBtvThanhDoan" />
+                  <span>BTV Thành Đoàn TP.HCM</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newBangKhenTWDoan" />
+                  <span>Bằng khen từ TW Đoàn</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newNckhCapTruong" />
+                  <span>Tham gia NCKH cấp Trường</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newDatGiaiHocThuat" />
+                  <span>Đạt giải cuộc thi học thuật</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newVanTheMy" />
+                  <span>Hoạt động Văn thể mỹ</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newSv5TotCapTruong" />
+                  <span>Sinh viên 5 tốt cấp Trường</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newSv5TotCapDhqg" />
+                  <span>Sinh viên 5 tốt cấp ĐHQG</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" [(ngModel)]="newSv5TotCapThanhPho" />
+                  <span>Sinh viên 5 tốt cấp Thành phố</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeAddModal()">Hủy Bỏ</button>
+          <button type="button" class="btn btn-primary" (click)="submitAddDelegate()" [disabled]="!newFullName.trim() || !newMssv.trim()">
+            Lưu Đại Biểu & Tạo Mã QR Theo MSSV
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

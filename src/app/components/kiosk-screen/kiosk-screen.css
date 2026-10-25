@@ -1,0 +1,410 @@
+.kiosk-container {
+  width: 100%;
+  min-height: 82vh;
+  background: radial-gradient(circle at 50% 20%, #003b73 0%, #001a33 100%);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  color: #ffffff;
+  border: 2px solid rgba(255, 204, 0, 0.4);
+}
+
+/* Top Bar */
+.kiosk-top-bar {
+  padding: 18px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.kiosk-org-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.emblem-mini {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px;
+}
+
+.emblem-mini svg {
+  width: 100%;
+  height: 100%;
+}
+
+.kiosk-org-info h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #ffdd44;
+}
+
+.kiosk-org-info p {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.kiosk-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.kiosk-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.kiosk-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Hero Content */
+.kiosk-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 26px 30px;
+  text-align: center;
+}
+
+.congress-hero-title {
+  margin-bottom: 22px;
+}
+
+.gold-subtitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #ffdd44;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.main-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  margin: 0;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Welcome Delegate Card */
+.welcome-delegate-card {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  border-radius: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 204, 0, 0.25);
+  border: 3px solid #ffcc00;
+  max-width: 800px;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 26px;
+  animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+  from { opacity: 0; transform: scale(0.85) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.welcome-badge-ribbon {
+  background: linear-gradient(135deg, #da251d 0%, #b91c1c 100%);
+  color: #ffffff;
+  padding: 10px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  border-bottom: 2px solid #ffcc00;
+}
+
+.welcome-grid {
+  display: flex;
+  padding: 24px 28px;
+  gap: 22px;
+  text-align: left;
+  align-items: center;
+}
+
+.welcome-avatar-box {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+}
+
+.welcome-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 3px solid #005baa;
+  box-shadow: 0 8px 20px rgba(0, 91, 170, 0.25);
+}
+
+.welcome-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background: #005baa;
+  color: #ffffff;
+  font-size: 3rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-id-tag {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #003b73;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.welcome-info-box {
+  flex: 1;
+}
+
+.welcome-mssv-banner {
+  display: inline-block;
+  background: #eef5fc;
+  color: #005baa;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border: 1px solid #bfdbfe;
+}
+
+.welcome-name {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.welcome-unit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #005baa;
+  margin-bottom: 10px;
+}
+
+.welcome-unit svg {
+  width: 18px;
+  height: 18px;
+}
+
+.welcome-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.tag-pill {
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.tag-pill.tag-politic {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.tag-pill.tag-doan {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.welcome-achieve-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.k-achieve-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #fef9c3;
+  color: #854d0e;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #fde047;
+}
+
+.welcome-seat-stamp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.seat-badge-kiosk {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.seat-badge-kiosk .lbl {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.seat-badge-kiosk .val {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #059669;
+}
+
+.stamp-verified-kiosk {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #a7f3d0;
+}
+
+/* Idle Welcome Card */
+.idle-welcome-card {
+  padding: 44px 30px;
+  max-width: 600px;
+  margin-bottom: 26px;
+}
+
+.glowing-crest {
+  width: 105px;
+  height: 105px;
+  margin: 0 auto 18px;
+  filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.6));
+  animation: floatCrest 3s ease-in-out infinite;
+}
+
+@keyframes floatCrest {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.crest-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.idle-welcome-card h2 {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #ffdd44;
+  letter-spacing: 1.5px;
+  margin: 0 0 10px 0;
+}
+
+.idle-welcome-card p {
+  font-size: 1rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Bottom Stats Bar */
+.kiosk-stats-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 14px 32px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+.kiosk-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.k-num {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.k-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.kiosk-stat-item.text-green .k-num { color: #4ade80; }
+.kiosk-stat-item.text-gold .k-num { color: #facc15; }
+
+.kiosk-stat-divider {
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+  .welcome-grid { flex-direction: column; text-align: center; }
+  .welcome-unit { justify-content: center; }
+  .welcome-tags-row { justify-content: center; }
+  .welcome-seat-stamp { flex-direction: column; gap: 8px; }
+  .main-title { font-size: 1.5rem; }
+  .kiosk-stats-footer { gap: 14px; padding: 12px 16px; flex-wrap: wrap; }
+  .k-num { font-size: 1.5rem; }
+}
