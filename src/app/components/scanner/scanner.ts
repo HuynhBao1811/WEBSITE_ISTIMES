@@ -41,8 +41,8 @@ export class ScannerComponent implements OnInit, OnDestroy {
   readonly manualCode = signal('');
   readonly availableCameras = signal<Array<{ id: string; label: string }>>([]);
   readonly selectedCameraId = signal<string>('');
-  readonly isCameraMirrored = signal<boolean>(true); // Default mirrored (lật gương)
-  readonly preferredFacingMode = signal<'environment' | 'user'>('environment');
+  readonly isCameraMirrored = signal<boolean>(false); // Mặc định KHÔNG lật gương cho camera sau điện thoại
+  readonly preferredFacingMode = signal<'environment' | 'user'>('environment'); // Mặc định camera sau
   readonly isScanSuccessPulse = signal<boolean>(false);
 
   // Sample QR Modal for testing
@@ -65,6 +65,12 @@ export class ScannerComponent implements OnInit, OnDestroy {
     if (!container) return;
     const video = container.querySelector('video');
     if (video) {
+      // Ensure playsinline for mobile Safari/Chrome
+      video.setAttribute('playsinline', 'true');
+      video.setAttribute('webkit-playsinline', 'true');
+      video.setAttribute('muted', 'true');
+      video.muted = true;
+
       const isMirrored = this.isCameraMirrored();
       const val = isMirrored ? 'scaleX(-1)' : 'scaleX(1)';
       video.style.transform = val;
@@ -82,13 +88,16 @@ export class ScannerComponent implements OnInit, OnDestroy {
 
       const nextLabel = (nextCam.label || '').toLowerCase();
       if (nextLabel.includes('front') || nextLabel.includes('trước') || nextLabel.includes('user')) {
-        this.isCameraMirrored.set(true);
+        this.preferredFacingMode.set('user');
+        this.isCameraMirrored.set(true); // Selfie camera lật gương
       } else {
-        this.isCameraMirrored.set(false);
+        this.preferredFacingMode.set('environment');
+        this.isCameraMirrored.set(false); // Camera sau KHÔNG lật gương
       }
     } else {
       const nextMode = this.preferredFacingMode() === 'environment' ? 'user' : 'environment';
       this.preferredFacingMode.set(nextMode);
+      // Tự động: Camera trước thì lật gương, camera sau thì không lật
       this.isCameraMirrored.set(nextMode === 'user');
     }
 
@@ -151,10 +160,18 @@ export class ScannerComponent implements OnInit, OnDestroy {
       if (devices && devices.length > 0) {
         this.availableCameras.set(devices);
         if (!this.selectedCameraId()) {
-          const backCamera = devices.find(d =>
-            d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('sau')
-          );
-          this.selectedCameraId.set(backCamera ? backCamera.id : devices[0].id);
+          // Look for rear/back camera keywords
+          const backCamera = devices.find(d => {
+            const l = (d.label || '').toLowerCase();
+            return l.includes('back') || l.includes('sau') || l.includes('rear') || l.includes('environment');
+          });
+          if (backCamera) {
+            this.selectedCameraId.set(backCamera.id);
+            this.preferredFacingMode.set('environment');
+            this.isCameraMirrored.set(false);
+          }
+          // Note: If no labeled back camera is found, keep selectedCameraId empty
+          // so startCamera() uses { facingMode: { ideal: 'environment' } } which opens phone rear camera!
         }
       }
     } catch {
@@ -186,14 +203,16 @@ export class ScannerComponent implements OnInit, OnDestroy {
       }
 
       const cameraId = this.selectedCameraId();
+      // On mobile devices, facingMode: { ideal: 'environment' } guarantees rear camera
       const cameraConfig = cameraId
         ? { deviceId: { exact: cameraId } }
-        : { facingMode: this.preferredFacingMode() };
+        : { facingMode: { ideal: this.preferredFacingMode() } };
 
       const scanConfig: Html5QrcodeCameraScanConfig = {
         fps: 25, // 25 scans per second for high responsiveness
         disableFlip: false, // Detects both standard and mirrored QR codes
         videoConstraints: {
+          facingMode: { ideal: this.preferredFacingMode() },
           width: { min: 640, ideal: 1280, max: 1920 },
           height: { min: 480, ideal: 720, max: 1080 }
         }

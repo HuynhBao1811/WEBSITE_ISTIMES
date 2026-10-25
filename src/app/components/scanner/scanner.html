@@ -129,6 +129,9 @@
         <!-- Active Camera Overlay with Scanning Target Frame & Laser -->
         @if (isCameraScanning()) {
           <div class="active-scan-overlay">
+            <div class="camera-lens-indicator">
+              {{ preferredFacingMode() === 'user' ? '🤳 Camera Trước' : '📷 Camera Sau Điện Thoại' }}
+            </div>
             <div class="target-frame" [class.success-pulse]="isScanSuccessPulse()">
               <div class="corner tl"></div>
               <div class="corner tr"></div>

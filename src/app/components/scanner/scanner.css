@@ -375,6 +375,22 @@
   justify-content: center;
 }
 
+.camera-lens-indicator {
+  position: absolute;
+  top: 14px;
+  background: rgba(0, 34, 68, 0.85);
+  backdrop-filter: blur(8px);
+  color: #ffdd44;
+  border: 1px solid rgba(255, 204, 0, 0.4);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 .target-frame {
   width: 220px;
   height: 220px;
