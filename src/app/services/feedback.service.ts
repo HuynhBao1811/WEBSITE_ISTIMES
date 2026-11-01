@@ -76,6 +76,10 @@ export class FeedbackService {
     }
   }
 
+  playBeepSound(): void {
+    this.playSuccessSound();
+  }
+
   playWarningSound(): void {
     if (!this.soundEnabled) return;
     try {

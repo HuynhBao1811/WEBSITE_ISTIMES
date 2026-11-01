@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import {
   Delegate,
   CongressInfo,
@@ -7,29 +7,27 @@ import {
   CONGRESS_DATE,
   CONGRESS_DATE_STR
 } from '../models/delegate.model';
-import { INITIAL_100_DELEGATES } from './initial-delegates';
-
-const STORAGE_KEY = 'DOAN_KHOA_DELEGATES_V3_MSSV';
+import { DatabaseService } from './database.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DelegateService {
-  private readonly delegatesState = signal<Delegate[]>(this.loadInitialDelegates());
+  private readonly db = inject(DatabaseService);
 
   readonly congressInfo = signal<CongressInfo>({
     title: 'ĐẠI HỘI ĐẠI BIỂU ĐOÀN TNCS HỒ CHÍ MINH',
     subTitle: 'PHIÊN TRỌNG THỂ - NHIỆM KỲ 2024 - 2027',
     term: 'Nhiệm kỳ 2024 - 2027',
     organization: 'ĐOÀN TNCS HỒ CHÍ MINH TRƯỜNG ĐẠI HỌC KINH TẾ - LUẬT',
-    unitName: 'ĐOÀN KHOA KINH TẾ - LUẬT',
-    location: 'Hội trường Lớn - A1 Trường ĐH Kinh tế - Luật ĐHQG-HCM',
+    unitName: 'ĐOÀN KHOA HỆ THỐNG THÔNG TIN',
+    location: 'Hội trường A1 - Trường ĐH Kinh tế - Luật, ĐHQG-HCM',
     date: '17/01/2027',
     targetDate: CONGRESS_DATE_STR
   });
 
-  // Public readonly signals
-  readonly delegates = this.delegatesState.asReadonly();
+  // Public readonly signals linked to DatabaseService
+  readonly delegates = this.db.delegates;
   readonly currentScannedDelegate = signal<Delegate | null>(null);
 
   // General Attendance Statistics
@@ -160,36 +158,9 @@ export class DelegateService {
     return Array.from(units).sort();
   });
 
-  private loadInitialDelegates(): Delegate[] {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch {
-      // fallback
-    }
-    return INITIAL_100_DELEGATES;
-  }
-
-  private saveToStorage(list: Delegate[]): void {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch {
-      // storage unavailable
-    }
-  }
-
   // Lookup primarily by MSSV or secondarily by ID / Name
   getDelegateByMssv(mssv: string): Delegate | undefined {
-    const clean = mssv.trim().toUpperCase();
-    return this.delegates().find(d =>
-      d.mssv.toUpperCase() === clean ||
-      d.id.toUpperCase() === clean
-    );
+    return this.db.getByMssv(mssv);
   }
 
   getDelegateById(id: string): Delegate | undefined {
@@ -197,12 +168,6 @@ export class DelegateService {
   }
 
   // Parses raw QR code string scanned from delegate's card.
-  // Supports:
-  // 1. Direct MSSV: 'K224111001'
-  // 2. Prefixed MSSV: 'MSSV:K224111001'
-  // 3. JSON: '{"mssv":"K224111001", ...}'
-  // 4. URL format: 'https://.../?mssv=K224111001'
-  // 5. Delegate ID: 'ĐB-001'
   parseQrCode(rawCode: string): CheckInResult {
     if (!rawCode || !rawCode.trim()) {
       return { success: false, message: 'Mã QR rỗng hoặc không quét được dữ liệu.' };
@@ -239,7 +204,7 @@ export class DelegateService {
     if (!delegate) {
       return {
         success: false,
-        message: `Không tìm thấy đại biểu có MSSV/Mã "${queryMssv}" trong danh sách triệu tập 100 đại biểu của Đại hội!`
+        message: `Không tìm thấy đại biểu có MSSV/Mã "${queryMssv}" trong danh sách triệu tập của Đại hội!`
       };
     }
 
@@ -258,52 +223,23 @@ export class DelegateService {
   }
 
   checkInDelegate(mssvOrId: string): Delegate {
-    const now = new Date();
-    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} - 17/01/2027`;
-
-    let updatedDelegate: Delegate | null = null;
-    this.delegatesState.update(list => {
-      const next = list.map(d => {
-        if (d.mssv.toUpperCase() === mssvOrId.toUpperCase() || d.id.toUpperCase() === mssvOrId.toUpperCase()) {
-          updatedDelegate = {
-            ...d,
-            checkedIn: true,
-            checkInTime: d.checkInTime || timeStr
-          };
-          return updatedDelegate;
-        }
-        return d;
-      });
-      this.saveToStorage(next);
-      return next;
-    });
-
-    return updatedDelegate || this.getDelegateByMssv(mssvOrId)!;
+    const existing = this.getDelegateByMssv(mssvOrId);
+    if (existing && existing.checkedIn) {
+      return existing;
+    }
+    const updated = this.db.toggleCheckIn(mssvOrId);
+    if (updated) {
+      this.currentScannedDelegate.set(updated);
+      return updated;
+    }
+    return existing!;
   }
 
   toggleCheckIn(mssvOrId: string): void {
-    const now = new Date();
-    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} - 17/01/2027`;
-
-    this.delegatesState.update(list => {
-      const next = list.map(d => {
-        if (d.mssv.toUpperCase() === mssvOrId.toUpperCase() || d.id.toUpperCase() === mssvOrId.toUpperCase()) {
-          const newChecked = !d.checkedIn;
-          const updated = {
-            ...d,
-            checkedIn: newChecked,
-            checkInTime: newChecked ? timeStr : undefined
-          };
-          if (this.currentScannedDelegate()?.mssv === d.mssv) {
-            this.currentScannedDelegate.set(updated);
-          }
-          return updated;
-        }
-        return d;
-      });
-      this.saveToStorage(next);
-      return next;
-    });
+    const updated = this.db.toggleCheckIn(mssvOrId);
+    if (updated && this.currentScannedDelegate()?.mssv === updated.mssv) {
+      this.currentScannedDelegate.set(updated);
+    }
   }
 
   setCurrentDelegate(delegate: Delegate | null): void {
@@ -311,46 +247,23 @@ export class DelegateService {
   }
 
   addDelegate(newDelegate: Omit<Delegate, 'id' | 'checkedIn'>): Delegate {
-    const nextNum = this.delegates().length + 1;
-    const id = `ĐB-${String(nextNum).padStart(3, '0')}`;
-    const fullDelegate: Delegate = {
-      ...newDelegate,
-      id,
-      checkedIn: false
-    };
-
-    this.delegatesState.update(list => {
-      const next = [...list, fullDelegate];
-      this.saveToStorage(next);
-      return next;
-    });
-
-    return fullDelegate;
+    return this.db.insert(newDelegate);
   }
 
   updateDelegate(updated: Delegate): void {
-    this.delegatesState.update(list => {
-      const next = list.map(d => (d.mssv.toUpperCase() === updated.mssv.toUpperCase() || d.id === updated.id) ? updated : d);
-      this.saveToStorage(next);
-      return next;
-    });
+    this.db.update(updated);
     if (this.currentScannedDelegate()?.mssv === updated.mssv) {
       this.currentScannedDelegate.set(updated);
     }
   }
 
   importDelegates(importedList: Delegate[]): void {
-    this.delegatesState.set(importedList);
-    this.saveToStorage(importedList);
+    this.db.importJson(JSON.stringify(importedList));
     this.currentScannedDelegate.set(null);
   }
 
   resetAllCheckIns(): void {
-    this.delegatesState.update(list => {
-      const next = list.map(d => ({ ...d, checkedIn: false, checkInTime: undefined }));
-      this.saveToStorage(next);
-      return next;
-    });
+    this.db.resetAllAttendance();
     if (this.currentScannedDelegate()) {
       const curr = this.currentScannedDelegate();
       if (curr) {
@@ -360,8 +273,7 @@ export class DelegateService {
   }
 
   resetToDefaults(): void {
-    localStorage.removeItem(STORAGE_KEY);
-    this.delegatesState.set(INITIAL_100_DELEGATES);
+    this.db.resetToDefaultDatabase();
     this.currentScannedDelegate.set(null);
   }
 

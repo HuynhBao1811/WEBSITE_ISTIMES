@@ -1,0 +1,269 @@
+<div class="lookup-page">
+  <!-- Hero Section (Kiểm Tra Tư Cách Đại Biểu) -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-badge">
+          <span class="badge-accent"></span>
+          <span class="badge-text">CỔNG XÁC MINH TRỰC TUYẾN</span>
+        </div>
+        <h1 class="hero-title">KIỂM TRA TƯ CÁCH ĐẠI BIỂU</h1>
+        <p class="hero-subtitle">Tra cứu nhanh chóng, minh bạch và thuận tiện</p>
+
+        <div class="hero-pills">
+          <div class="pill-item">
+            <span class="pill-icon check">✓</span>
+            <div class="pill-text">
+              <strong>Chính xác</strong>
+              <small>Dữ liệu được xác minh</small>
+            </div>
+          </div>
+          <div class="pill-item">
+            <span class="pill-icon bolt">⚡</span>
+            <div class="pill-text">
+              <strong>Nhanh chóng</strong>
+              <small>Tra cứu trong tích tắc</small>
+            </div>
+          </div>
+          <div class="pill-item">
+            <span class="pill-icon users">👥</span>
+            <div class="pill-text">
+              <strong>Minh bạch</strong>
+              <small>Thông tin rõ ràng</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Graphic Shield -->
+      <div class="hero-right">
+        <div class="shield-illustration">
+          <div class="shield-halo"></div>
+          <div class="shield-card back-left"></div>
+          <div class="shield-card back-right"></div>
+          <div class="shield-body">
+            <svg class="shield-svg" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#0284c7" />
+                  <stop offset="50%" stop-color="#005baa" />
+                  <stop offset="100%" stop-color="#003366" />
+                </linearGradient>
+                <filter id="shieldShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#003b73" flood-opacity="0.3"/>
+                </filter>
+              </defs>
+              <path d="M50 5 L88 20 C88 65 50 95 50 95 C50 95 12 65 12 20 Z" fill="url(#shieldGrad)" filter="url(#shieldShadow)"/>
+              <path d="M50 12 L82 24 C82 60 50 87 50 87 C50 87 18 60 18 24 Z" fill="#005baa" fill-opacity="0.6"/>
+              <polyline points="35,50 46,62 67,38" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="shield-caption">Thông tin chính thức Đoàn Khoa</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Grid Section -->
+  <section class="search-section">
+    <div class="search-grid">
+      <!-- Search Box (Left) -->
+      <div class="search-card">
+        <div class="card-head">
+          <div class="icon-bubble">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <div>
+            <h3>Tra cứu thông tin đại biểu</h3>
+            <p>Nhập mã đại biểu hoặc MSSV để kiểm tra trạng thái</p>
+          </div>
+        </div>
+
+        <form class="search-form" (ngSubmit)="onSearch()">
+          <div class="search-input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+              </svg>
+            </span>
+            <input
+              type="text"
+              class="search-input"
+              [(ngModel)]="searchQuery"
+              name="searchQuery"
+              placeholder="Ví dụ: ĐB-001 hoặc K244118888..."
+            />
+          </div>
+          <button type="submit" class="btn-search">
+            <span>KIỂM TRA NGAY</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </form>
+
+        <div class="quick-examples">
+          <span class="quick-label">Mẫu gợi ý tra cứu nhanh:</span>
+          <button type="button" class="btn-chip" (click)="quickSearch('K244118888')">K244118888 (Bí thư)</button>
+          <button type="button" class="btn-chip" (click)="quickSearch('K234111003')">K234111003 (Phó BT)</button>
+          <button type="button" class="btn-chip" (click)="quickSearch('K254160001')">K254160001 (BTV)</button>
+          <button type="button" class="btn-chip" (click)="quickSearch('K224111001')">K224111001</button>
+        </div>
+      </div>
+
+      <!-- How to Search Card (Right) -->
+      <div class="guide-card">
+        <div class="guide-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <h3>CÁCH THỨC TRA CỨU</h3>
+        </div>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">01</div>
+            <div class="step-desc">
+              <strong>Nhập mã đại biểu</strong>
+              <p>Nhập đúng mã số sinh viên (MSSV) hoặc mã ĐB được cung cấp</p>
+            </div>
+          </div>
+          <div class="step-divider"></div>
+          <div class="step-item">
+            <div class="step-num">02</div>
+            <div class="step-desc">
+              <strong>Xác nhận thông tin</strong>
+              <p>Hệ thống tự động kiểm tra và đối chiếu danh sách chính thức</p>
+            </div>
+          </div>
+          <div class="step-divider"></div>
+          <div class="step-item">
+            <div class="step-num">03</div>
+            <div class="step-desc">
+              <strong>Xem kết quả</strong>
+              <p>Hiển thị chi tiết tư cách đại biểu, chỗ ngồi và mã QR điểm danh</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Result Section -->
+  <section class="result-section">
+    @if (hasSearched()) {
+      @if (foundDelegate(); as d) {
+        <div class="result-box verified">
+          <!-- Top bar -->
+          <div class="result-box-header">
+            <div class="header-tag">
+              <span class="tag-icon">📋</span>
+              <span>KẾT QUẢ TRA CỨU</span>
+            </div>
+            <span class="auth-pill">DỮ LIỆU ĐÃ XÁC THỰC CHÍNH THỨC</span>
+          </div>
+
+          <div class="result-box-body">
+            <!-- Left status banner -->
+            <div class="status-left">
+              <div class="status-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <h2 class="status-title">ĐỦ TƯ CÁCH ĐẠI BIỂU</h2>
+              <p class="status-sub">
+                Đại biểu có tên trong danh sách chính thức triệu tập của Đoàn khoa Hệ thống thông tin.
+              </p>
+
+              @if (qrUrl(); as url) {
+                <div class="qr-preview-box">
+                  <img [src]="url" alt="QR Code" class="qr-img" />
+                  <button type="button" class="btn-download-qr" (click)="downloadQr()">
+                    📥 Tải mã QR điểm danh (PNG)
+                  </button>
+                </div>
+              }
+            </div>
+
+            <!-- Right details table -->
+            <div class="details-right">
+              <div class="data-table">
+                <div class="data-row">
+                  <span class="row-label">Mã đại biểu:</span>
+                  <strong class="row-value badge-id">{{ d.id }}</strong>
+                </div>
+                <div class="data-row">
+                  <span class="row-label">Mã số sinh viên:</span>
+                  <strong class="row-value text-blue">{{ d.mssv }}</strong>
+                </div>
+                <div class="data-row">
+                  <span class="row-label">Họ và tên:</span>
+                  <strong class="row-value name-val">{{ d.fullName }}</strong>
+                </div>
+                <div class="data-row">
+                  <span class="row-label">Đơn vị / Chi đoàn:</span>
+                  <span class="row-value">{{ d.unit }}</span>
+                </div>
+                <div class="data-row">
+                  <span class="row-label">Chính trị:</span>
+                  <span class="row-value font-medium">
+                    {{ d.isPartyMember === 1 ? 'Đảng viên Đảng CSVN (Đoàn viên)' : 'Đoàn viên Đoàn TNCS Hồ Chí Minh' }}
+                  </span>
+                </div>
+                <div class="data-row">
+                  <span class="row-label">Vị trí chỗ ngồi:</span>
+                  <span class="row-value seat-badge">{{ d.seatNumber || 'Hàng ghế đại biểu triệu tập' }}</span>
+                </div>
+                <div class="data-row">
+                  <span class="row-label">Trạng thái:</span>
+                  <span class="status-pill verified">
+                    <span class="dot"></span>
+                    <span>Đã xác minh tư cách đại biểu</span>
+                  </span>
+                </div>
+                <div class="data-row">
+                  <span class="row-label">Điểm danh Đại hội:</span>
+                  @if (d.checkedIn) {
+                    <span class="status-pill checked-in">
+                      ✓ Đã có mặt lúc {{ d.checkInTime }}
+                    </span>
+                  } @else {
+                    <span class="status-pill pending">
+                      ⏳ Chưa điểm danh (Sẵn sàng quét QR)
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- Not found -->
+        <div class="result-box not-found">
+          <div class="not-found-content">
+            <div class="not-found-icon">⚠️</div>
+            <h3>KHÔNG TÌM THẤY DỮ LIỆU ĐẠI BIỂU</h3>
+            <p>
+              Mã <strong>"{{ searchQuery }}"</strong> không nằm trong danh sách 100 đại biểu triệu tập hoặc chưa được đồng bộ vào hệ thống.
+            </p>
+            <div class="not-found-actions">
+              <span>Đồng chí có thể:</span>
+              <ul>
+                <li>Kiểm tra lại định dạng MSSV (Ví dụ: <code>K244118888</code>).</li>
+                <li>Điền phiếu khảo sát thu thập thông tin đại biểu để được cấp mã QR.</li>
+                <li>Liên hệ Ban Tổ chức Đoàn Khoa Hệ thống thông tin để được hỗ trợ.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </section>
+</div>

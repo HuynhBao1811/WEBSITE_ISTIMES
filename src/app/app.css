@@ -2,26 +2,70 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f1f5f9;
+  background-color: var(--bg-page);
 }
 
 .container {
   width: 100%;
-  max-width: 1320px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 20px;
   box-sizing: border-box;
 }
 
-/* Header */
+/* ==========================================================================
+   Top Announcement Bar (Dark Navy #092347)
+   ========================================================================== */
+.top-announcement-bar {
+  background-color: #092347;
+  color: #e2e8f0;
+  font-size: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.bar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.bar-right {
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.text-gold {
+  color: #ffbe0b;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   Main Header (Clean White, crisp and bright)
+   ========================================================================== */
 .app-header {
-  background: linear-gradient(135deg, #003b73 0%, #005baa 100%);
-  color: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 59, 115, 0.25);
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 3px solid #ffcc00;
 }
 
 .header-inner {
@@ -36,23 +80,19 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  cursor: pointer;
+  text-decoration: none;
 }
 
-.youth-crest {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.brand-logo {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
 }
 
-.youth-crest svg {
-  width: 100%;
-  height: 100%;
+.brand-group:hover .brand-logo {
+  transform: scale(1.03);
 }
 
 .brand-text {
@@ -60,27 +100,21 @@
   flex-direction: column;
 }
 
-.brand-sub {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #ffdd44;
+.brand-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--youth-deep-navy);
+  margin: 0;
+  letter-spacing: 0.2px;
   text-transform: uppercase;
 }
 
-.brand-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.18rem;
-  font-weight: 900;
-  letter-spacing: 0.5px;
-  margin: 0;
-  color: #ffffff;
-}
-
-.brand-unit {
-  font-size: 0.76rem;
-  opacity: 0.9;
+.brand-slogan {
+  font-size: 13px;
+  color: var(--text-muted);
   font-weight: 500;
+  margin-top: 1px;
 }
 
 .header-right {
@@ -94,105 +128,187 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 7px 14px;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  padding: 6px 14px;
   border-radius: 30px;
   cursor: pointer;
-  transition: all 0.2s;
-  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .live-counter-pill:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #bae6fd;
 }
 
 .live-pulse {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #4ade80;
-  box-shadow: 0 0 10px #4ade80;
-  animation: liveBlink 1.5s infinite;
+  background-color: var(--youth-green);
+  animation: pulse-ring 2s infinite;
 }
 
-@keyframes liveBlink {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
 .counter-label {
-  font-size: 0.78rem;
+  font-size: 12px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--youth-blue);
 }
 
 .counter-val {
-  font-size: 0.92rem;
+  font-size: 13px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--youth-deep-navy);
 }
 
 .counter-percent {
-  font-size: 0.78rem;
-  color: #ffdd44;
-  font-weight: 700;
+  font-size: 12px;
+  color: var(--youth-blue);
+  font-weight: 600;
 }
 
+/* Sound & Config Buttons */
 .head-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: var(--text-secondary);
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .head-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #e2e8f0;
+  color: var(--youth-blue);
+}
+
+.head-btn.active {
+  background: #e0f2fe;
+  border-color: #bae6fd;
+  color: var(--youth-blue);
 }
 
 .head-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
 }
 
-/* Navigation Tabs */
+/* User Pill & Auth Buttons */
+.btn-login-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--youth-blue);
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-login-header:hover {
+  background: var(--youth-blue-hover);
+  box-shadow: 0 4px 10px rgba(0, 91, 170, 0.2);
+}
+
+.btn-login-header svg {
+  width: 16px;
+  height: 16px;
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.user-role-badge {
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.user-role-badge.admin {
+  background: #fef08a;
+  color: #854d0e;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--youth-deep-navy);
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-logout {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.btn-logout:hover {
+  background: #fee2e2;
+}
+
+/* ==========================================================================
+   Navigation Bar (Tabs with Blue Underline Indicator)
+   ========================================================================== */
 .app-nav {
-  background: rgba(0, 45, 90, 0.6);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
 }
 
 .nav-inner {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.nav-inner::-webkit-scrollbar {
-  display: none;
+  white-space: nowrap;
 }
 
 .nav-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px 18px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 18px;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  color: #cbd5e1;
-  font-size: 0.88rem;
-  font-weight: 700;
   cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
+  position: relative;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
 }
 
 .nav-tab svg {
@@ -201,105 +317,153 @@
 }
 
 .nav-tab:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--youth-blue);
+  background: #f8fafc;
 }
 
 .nav-tab.active {
-  color: #ffdd44;
-  border-bottom-color: #ffdd44;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--youth-blue);
+  border-bottom: 2.5px solid var(--youth-blue);
+  font-weight: 700;
+}
+
+.admin-tab-separator {
+  width: 1px;
+  height: 22px;
+  background: #e2e8f0;
+  margin: 0 4px;
+}
+
+.admin-tab {
+  color: #0369a1;
+}
+
+.admin-tab.active {
+  color: var(--youth-blue);
+  border-bottom-color: var(--youth-blue);
 }
 
 .tab-badge {
-  background: #ffcc00;
-  color: #003b73;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 1px 7px;
+  background: #e0f2fe;
+  color: var(--youth-blue);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
   border-radius: 10px;
 }
 
-/* Main Container */
+/* ==========================================================================
+   Main Content Layout
+   ========================================================================== */
 .app-main {
   flex: 1;
   padding-top: 28px;
-  padding-bottom: 40px;
+  padding-bottom: 48px;
 }
 
-/* Footer */
+/* ==========================================================================
+   Global Footer (Matching User Mockup)
+   ========================================================================== */
 .app-footer {
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  padding: 18px 0;
+  background-color: #092347;
+  color: #cbd5e1;
+  padding: 24px 0;
   margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.82rem;
-  color: #64748b;
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 20px;
 }
 
 .footer-left strong {
-  color: #0f172a;
+  display: block;
+  font-size: 15px;
+  color: #ffffff;
+  margin-bottom: 4px;
 }
 
 .footer-left p {
-  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0;
 }
 
-/* Modal Backdrop */
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.secure-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.secure-tag svg {
+  width: 15px;
+  height: 15px;
+  color: #38bdf8;
+}
+
+.notice-text {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   Config Modal
+   ========================================================================== */
 .modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(15, 23, 42, 0.6);
+  inset: 0;
+  background: rgba(9, 35, 71, 0.6);
   backdrop-filter: blur(4px);
-  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  z-index: 9999;
+  padding: 16px;
 }
 
 .modal-card {
   background: #ffffff;
-  border-radius: 20px;
   width: 100%;
-  max-width: 520px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  max-width: 500px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px rgba(0, 30, 80, 0.2);
   overflow: hidden;
 }
 
 .modal-header {
-  padding: 18px 24px;
-  background: #005baa;
-  color: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 18px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .modal-header h3 {
+  font-size: 16px;
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 800;
+  color: var(--youth-deep-navy);
 }
 
 .modal-close-btn {
-  background: transparent;
+  background: none;
   border: none;
-  color: #ffffff;
-  font-size: 1.2rem;
+  font-size: 18px;
+  color: #94a3b8;
   cursor: pointer;
-  opacity: 0.8;
 }
 
 .modal-body {
@@ -312,160 +476,73 @@
   gap: 14px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .form-group label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #475569;
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--text-secondary);
 }
 
 .form-control {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #cbd5e1;
-  font-size: 0.88rem;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
   outline: none;
 }
 
 .form-control:focus {
-  border-color: #005baa;
+  border-color: var(--youth-blue);
 }
 
 .modal-footer {
-  padding: 14px 24px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 10px;
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
 }
 
 .btn-secondary {
   background: #e2e8f0;
-  color: #334155;
-  border: none;
-  padding: 9px 16px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
+  color: var(--text-secondary);
 }
 
 .btn-primary {
-  background: #005baa;
+  background: var(--youth-blue);
   color: #ffffff;
-  border: none;
-  padding: 9px 18px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
 }
 
-/* Print styling */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-  .app-shell {
-    background: #ffffff !important;
-  }
-  .app-main {
-    padding: 0 !important;
-  }
-}
-
-/* Mobile & Tablet Responsive */
-@media (max-width: 992px) {
-  .container {
-    padding: 0 16px;
-  }
-}
-
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
 @media (max-width: 768px) {
-  .container {
-    padding: 0 12px;
-  }
-  .header-inner {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-  .brand-group {
-    gap: 10px;
-  }
-  .youth-crest {
-    width: 42px;
-    height: 42px;
-  }
-  .brand-title {
-    font-size: 0.98rem;
-    line-height: 1.25;
-  }
-  .brand-sub {
-    font-size: 0.62rem;
-  }
-  .brand-unit {
-    font-size: 0.72rem;
-  }
-  .header-right {
-    width: 100%;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .live-counter-pill {
-    flex: 1;
-    padding: 6px 10px;
-    justify-content: center;
-  }
-  .counter-label {
+  .bar-right {
     display: none;
   }
-  .counter-val {
-    font-size: 0.85rem;
-  }
-  .app-main {
-    padding-top: 16px;
-    padding-bottom: 24px;
-  }
-  .nav-inner {
-    padding: 0 8px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .nav-tab {
-    padding: 10px 12px;
-    font-size: 0.8rem;
-    gap: 6px;
-  }
-  .nav-tab svg {
-    width: 15px;
-    height: 15px;
-  }
-}
-
-@media (max-width: 480px) {
   .brand-title {
-    font-size: 0.9rem;
+    font-size: 15px;
+  }
+  .brand-slogan {
+    display: none;
   }
   .footer-inner {
     flex-direction: column;
     text-align: center;
-    gap: 8px;
   }
-  .modal-card {
-    border-radius: 16px;
-    padding: 0;
-  }
-  .modal-body {
-    padding: 16px;
-  }
-  .modal-header, .modal-footer {
-    padding: 12px 16px;
+  .footer-right {
+    align-items: center;
   }
 }
-

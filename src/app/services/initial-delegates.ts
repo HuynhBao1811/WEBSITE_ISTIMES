@@ -35,31 +35,49 @@ function generate100Delegates(): Delegate[] {
     let month = ((i * 3) % 12) + 1;
     let day = ((i * 7) % 28) + 1;
 
-    // Specific key delegates to match samples & edge cases (Min/Max age)
+    // Specific key delegates including Admin Committee & edge cases (Min/Max age)
     if (i === 1) {
+      fullName = 'Huỳnh Gia Bảo';
+      mssv = 'K244118888';
+      gender = 'Nam';
+      isMale = true;
+      year = 2004; month = 11; day = 18;
+    } else if (i === 2) {
+      fullName = 'Nguyễn Hữu Đức';
+      mssv = 'K234111003';
+      gender = 'Nam';
+      isMale = true;
+      year = 2004; month = 5; day = 22;
+    } else if (i === 3) {
+      fullName = 'Hà Khôi';
+      mssv = 'K254160001';
+      gender = 'Nam';
+      isMale = true;
+      year = 2005; month = 8; day = 15;
+    } else if (i === 4) {
+      fullName = 'Huỳnh Phương Vy';
+      mssv = 'K254110002';
+      gender = 'Nữ';
+      isMale = false;
+      year = 2005; month = 3; day = 20;
+    } else if (i === 5) {
+      fullName = 'Nguyễn Ngọc Anh';
+      mssv = 'K254060003';
+      gender = 'Nữ';
+      isMale = false;
+      year = 2005; month = 9; day = 10;
+    } else if (i === 6) {
       fullName = 'Nguyễn Văn Hùng';
       mssv = 'K224111001';
       gender = 'Nam';
       isMale = true;
-      year = 1999; month = 3; day = 15; // Lớn tuổi nhất (Học cao học / Giảng viên trẻ)
-    } else if (i === 2) {
+      year = 1999; month = 3; day = 15; // Lớn tuổi nhất
+    } else if (i === 7) {
       fullName = 'Lê Thị Thu Thảo';
       mssv = 'K214010002';
       gender = 'Nữ';
       isMale = false;
       year = 2003; month = 5; day = 19;
-    } else if (i === 3) {
-      fullName = 'Hoàng Văn Lập';
-      mssv = 'K234111003';
-      gender = 'Nam';
-      isMale = true;
-      year = 2004; month = 10; day = 10;
-    } else if (i === 4) {
-      fullName = 'Trần Hữu Nghị';
-      mssv = 'K244118888';
-      gender = 'Nam';
-      isMale = true;
-      year = 2005; month = 9; day = 12;
     } else if (i === 100) {
       fullName = 'Vũ Mai Vy';
       mssv = 'K244111100';

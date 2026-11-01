@@ -1,33 +1,42 @@
 <div class="app-shell">
-  <!-- Top Global Header -->
+  <!-- Topmost Notification Banner (Giống ảnh mẫu của user) -->
+  <aside class="top-announcement-bar no-print">
+    <div class="container bar-inner">
+      <div class="bar-left">
+        <span class="bar-dot"></span>
+        <span>CỔNG THÔNG TIN ĐOÀN KHOA HỆ THỐNG THÔNG TIN</span>
+      </div>
+      <div class="bar-right">
+        <span><span class="text-gold">✔</span> Vì sinh viên • Đoàn kết • Sáng tạo • Phát triển</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Global Header -->
   <header class="app-header no-print">
     <div class="header-inner container">
       <!-- Logo and Titles -->
-      <div class="brand-group" (click)="setTab('scanner')" style="cursor: pointer;">
-        <div class="youth-crest">
-          <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="48" fill="#005baa" stroke="#ffcc00" stroke-width="4"/>
-            <polygon points="50,15 61,38 86,41 68,58 72,83 50,71 28,83 32,58 14,41 39,38" fill="#ffcc00"/>
-          </svg>
-        </div>
+      <div class="brand-group" (click)="setTab('lookup')">
+        <img src="logo-istimes.png" alt="Logo IS Times" class="brand-logo" />
         <div class="brand-text">
-          <span class="brand-sub">{{ delegateService.congressInfo().organization }}</span>
-          <h1 class="brand-title">HỆ THỐNG QUÉT QR TƯ CÁCH ĐẠI BIỂU</h1>
-          <span class="brand-unit">{{ delegateService.congressInfo().unitName }} • Ngày {{ delegateService.congressInfo().date }}</span>
+          <h1 class="brand-title">ĐOÀN KHOA HỆ THỐNG THÔNG TIN</h1>
+          <span class="brand-slogan">Kết nối sinh viên • Kiến tạo tương lai</span>
         </div>
       </div>
 
-      <!-- Quick Status & Action Buttons -->
+      <!-- Quick Action Buttons & User Menu -->
       <div class="header-right">
-        <!-- Live Attendance Badge -->
-        <div class="live-counter-pill" (click)="setTab('stats')" title="Bấm để xem danh sách chi tiết">
-          <span class="live-pulse"></span>
-          <span class="counter-label">Đã Điểm Danh:</span>
-          <strong class="counter-val">
-            {{ delegateService.checkedInCount() }} / {{ delegateService.totalDelegates() }}
-          </strong>
-          <span class="counter-percent">({{ delegateService.attendancePercentage() }}%)</span>
-        </div>
+        <!-- Live Attendance Pill (for admin or live view) -->
+        @if (auth.isAdmin()) {
+          <div class="live-counter-pill" (click)="setTab('stats')" title="Bấm để xem danh sách chi tiết">
+            <span class="live-pulse"></span>
+            <span class="counter-label">Điểm Danh:</span>
+            <strong class="counter-val">
+              {{ delegateService.checkedInCount() }} / {{ delegateService.totalDelegates() }}
+            </strong>
+            <span class="counter-percent">({{ delegateService.attendancePercentage() }}%)</span>
+          </div>
+        }
 
         <!-- Sound Toggle -->
         <button
@@ -51,54 +60,77 @@
           }
         </button>
 
-        <!-- Edit Config Button -->
-        <button
-          type="button"
-          class="head-btn"
-          (click)="openConfig()"
-          title="Tùy chỉnh thông tin Đại hội"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-        </button>
+        <!-- Edit Config Button (Admin only) -->
+        @if (auth.isAdmin()) {
+          <button
+            type="button"
+            class="head-btn"
+            (click)="openConfig()"
+            title="Tùy chỉnh thông tin Đại hội"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        }
+
+        <!-- Auth Status & Controls -->
+        @if (auth.isLoggedIn(); as isLogged) {
+          <div class="user-pill">
+            <span class="user-role-badge" [class.admin]="auth.isAdmin()">
+              {{ auth.isAdmin() ? 'BCH Admin' : 'Đoàn viên' }}
+            </span>
+            <span class="user-name">{{ auth.currentUser()?.fullName || auth.currentUser()?.email }}</span>
+            <button type="button" class="btn-logout" (click)="logout()" title="Đăng xuất">
+              Thoát
+            </button>
+          </div>
+        } @else {
+          <button type="button" class="btn-login-header" (click)="openAuthModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>Đăng Nhập</span>
+          </button>
+        }
       </div>
     </div>
 
-    <!-- Navigation Bar (Tabs) -->
+    <!-- Main Navigation Bar -->
     <nav class="app-nav">
       <div class="nav-inner container">
+        <!-- Tab: Tra Cứu Đại Biểu (Mặc định cho mọi người) -->
         <button
           type="button"
           class="nav-tab"
-          [class.active]="activeTab() === 'scanner'"
-          (click)="setTab('scanner')"
+          [class.active]="activeTab() === 'lookup'"
+          (click)="setTab('lookup')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <span>Quét QR (MSSV)</span>
+          <span>Tra cứu đại biểu</span>
         </button>
 
+        <!-- Tab: Khảo Sát Thông Tin (Cho mọi người) -->
         <button
           type="button"
           class="nav-tab"
-          [class.active]="activeTab() === 'stats'"
-          (click)="setTab('stats')"
+          [class.active]="activeTab() === 'survey'"
+          (click)="setTab('survey')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="20" x2="18" y2="10"></line>
-            <line x1="12" y1="20" x2="12" y2="4"></line>
-            <line x1="6" y1="20" x2="6" y2="14"></line>
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
           </svg>
-          <span>Thống Kê 100 ĐB & Tiêu Chuẩn</span>
-          <span class="tab-badge">{{ delegateService.totalDelegates() }}</span>
+          <span>Phiếu Khảo Sát ĐB</span>
         </button>
 
+        <!-- Tab: Mã QR & In Thẻ Đeo (Cho mọi người) -->
         <button
           type="button"
           class="nav-tab"
@@ -112,32 +144,57 @@
           <span>Mã QR & In Thẻ Đeo</span>
         </button>
 
-        <button
-          type="button"
-          class="nav-tab"
-          [class.active]="activeTab() === 'survey'"
-          (click)="setTab('survey')"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-          </svg>
-          <span>Mẫu Form Khảo Sát 100 ĐB</span>
-        </button>
+        <!-- Admin Only Tabs -->
+        @if (auth.isAdmin()) {
+          <div class="admin-tab-separator"></div>
 
-        <button
-          type="button"
-          class="nav-tab"
-          [class.active]="activeTab() === 'kiosk'"
-          (click)="setTab('kiosk')"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-          <span>Màn Hình Máy Chiếu Lễ Tân</span>
-        </button>
+          <!-- Tab: Admin Dashboard (Số liệu đoàn viên) -->
+          <button
+            type="button"
+            class="nav-tab admin-tab"
+            [class.active]="activeTab() === 'stats'"
+            (click)="setTab('stats')"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Dashboard Quản Trị</span>
+            <span class="tab-badge">{{ delegateService.totalDelegates() }}</span>
+          </button>
+
+          <!-- Tab: QR Scanner (Camera điểm danh) -->
+          <button
+            type="button"
+            class="nav-tab admin-tab"
+            [class.active]="activeTab() === 'scanner'"
+            (click)="setTab('scanner')"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Điểm Danh QR Camera</span>
+          </button>
+
+          <!-- Tab: Kiosk Screen -->
+          <button
+            type="button"
+            class="nav-tab admin-tab"
+            [class.active]="activeTab() === 'kiosk'"
+            (click)="setTab('kiosk')"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            <span>Màn Hình Kiosk Lễ Tân</span>
+          </button>
+        }
       </div>
     </nav>
   </header>
@@ -145,17 +202,20 @@
   <!-- Main Content Body -->
   <main class="app-main container">
     @switch (activeTab()) {
-      @case ('scanner') {
-        <app-scanner></app-scanner>
+      @case ('lookup') {
+        <app-delegate-lookup></app-delegate-lookup>
       }
-      @case ('stats') {
-        <app-stats></app-stats>
+      @case ('survey') {
+        <app-survey-form></app-survey-form>
       }
       @case ('badges') {
         <app-badge-generator></app-badge-generator>
       }
-      @case ('survey') {
-        <app-survey-form></app-survey-form>
+      @case ('stats') {
+        <app-stats></app-stats>
+      }
+      @case ('scanner') {
+        <app-scanner></app-scanner>
       }
       @case ('kiosk') {
         <app-kiosk-screen></app-kiosk-screen>
@@ -163,18 +223,30 @@
     }
   </main>
 
-  <!-- Global Footer -->
+  <!-- Global Footer (Giống giao diện mẫu của user) -->
   <footer class="app-footer no-print">
     <div class="footer-inner container">
       <div class="footer-left">
-        <strong>{{ delegateService.congressInfo().title }}</strong>
-        <p>{{ delegateService.congressInfo().unitName }} • Ngày tổ chức: 17/01/2027 • Hệ thống điểm danh QR theo MSSV</p>
+        <strong>Đoàn Khoa Hệ Thống Thông Tin • IS Times</strong>
+        <p>Đồng hành cùng sinh viên, kiến tạo giá trị bền vững • ĐH Kinh tế - Luật, ĐHQG-HCM</p>
       </div>
       <div class="footer-right">
-        <span>Bản Demo Beta 100 Đại Biểu • Công nghệ Angular</span>
+        <span class="secure-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Bảo mật thông tin đại biểu
+        </span>
+        <small class="notice-text">Thông tin chỉ phục vụ công tác xác minh tư cách đại biểu Đại hội</small>
       </div>
     </div>
   </footer>
+
+  <!-- Auth Modal -->
+  @if (showAuthModal()) {
+    <app-auth-modal (close)="closeAuthModal()"></app-auth-modal>
+  }
 
   <!-- Edit Congress Configuration Modal -->
   @if (showConfigModal()) {

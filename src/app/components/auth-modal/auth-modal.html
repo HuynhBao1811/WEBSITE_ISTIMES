@@ -1,0 +1,165 @@
+<div class="auth-backdrop" (click)="close.emit()">
+  <div class="auth-card" (click)="$event.stopPropagation()">
+    <!-- Modal Close -->
+    <button type="button" class="close-btn" (click)="close.emit()" title="Đóng">✕</button>
+
+    <!-- Header -->
+    <div class="auth-header">
+      <img src="logo-istimes.png" alt="Logo IS Times" class="auth-logo" />
+      <h2>CỔNG THÔNG TIN ĐOÀN KHOA HTTT</h2>
+      <p>Hệ thống xác thực tài khoản Đại biểu & Quản trị viên</p>
+    </div>
+
+    <!-- Tabs switcher -->
+    <div class="auth-tabs">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="mode() === 'login'"
+        (click)="mode.set('login')"
+      >
+        Đăng Nhập
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="mode() === 'register'"
+        (click)="mode.set('register')"
+      >
+        Đăng Ký Mới
+      </button>
+    </div>
+
+    <!-- Alerts -->
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        <span>⚠️ {{ errorMessage() }}</span>
+      </div>
+    }
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        <span>✓ {{ successMessage() }}</span>
+      </div>
+    }
+
+    <!-- Tab Login -->
+    @if (mode() === 'login') {
+      <form class="auth-form" (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label>Địa chỉ Email (ST UEL) *</label>
+          <div class="input-with-icon">
+            <span class="icon">✉️</span>
+            <input
+              type="email"
+              class="form-ctrl"
+              [(ngModel)]="loginEmail"
+              name="loginEmail"
+              placeholder="VD: baohgk24411e@st.uel.edu.vn"
+              required
+            />
+          </div>
+          <small class="hint">5 email Admin sẽ được tự động kích hoạt quyền Quản trị viên.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Mật khẩu *</label>
+          <div class="input-with-icon">
+            <span class="icon">🔒</span>
+            <input
+              type="password"
+              class="form-ctrl"
+              [(ngModel)]="loginPassword"
+              name="loginPassword"
+              placeholder="Nhập mật khẩu của bạn..."
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary-auth">
+          ĐĂNG NHẬP VÀO HỆ THỐNG
+        </button>
+      </form>
+
+      <!-- Quick Admin Select Section -->
+      <div class="quick-admin-section">
+        <div class="divider">
+          <span>HOẶC ĐĂNG NHẬP NHANH QUẢN TRỊ VIÊN BCH</span>
+        </div>
+        <p class="quick-sub">Chọn 1 trong 5 đồng chí được phân quyền Admin:</p>
+        <div class="admin-chips-list">
+          @for (adm of adminList; track adm.email) {
+            <button
+              type="button"
+              class="admin-chip-btn"
+              (click)="quickAdminLogin(adm.email)"
+              title="Bấm để đăng nhập ngay với tư cách này"
+            >
+              <span class="badge-role">Admin</span>
+              <div class="admin-info">
+                <strong>{{ adm.title }}</strong>
+                <small>{{ adm.email }}</small>
+              </div>
+              <span class="arrow">→</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Tab Register -->
+    @if (mode() === 'register') {
+      <form class="auth-form" (ngSubmit)="onRegister()">
+        <div class="form-group">
+          <label>Họ và Tên Đoàn viên / Đại biểu *</label>
+          <input
+            type="text"
+            class="form-ctrl"
+            [(ngModel)]="regFullName"
+            name="regFullName"
+            placeholder="VD: Nguyễn Văn A"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Email UEL (@st.uel.edu.vn) *</label>
+          <input
+            type="email"
+            class="form-ctrl"
+            [(ngModel)]="regEmail"
+            name="regEmail"
+            placeholder="VD: tensinhvien@st.uel.edu.vn"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Mã số sinh viên (MSSV)</label>
+          <input
+            type="text"
+            class="form-ctrl"
+            [(ngModel)]="regMssv"
+            name="regMssv"
+            placeholder="VD: K224111234"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Mật khẩu tạo mới *</label>
+          <input
+            type="password"
+            class="form-ctrl"
+            [(ngModel)]="regPassword"
+            name="regPassword"
+            placeholder="Tối thiểu 6 ký tự..."
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-primary-auth">
+          ĐĂNG KÝ TÀI KHOẢN MỚI
+        </button>
+      </form>
+    }
+  </div>
+</div>

@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DelegateService } from '../../services/delegate.service';
+import { DatabaseService } from '../../services/database.service';
 import { QrService } from '../../services/qr.service';
 import { FeedbackService } from '../../services/feedback.service';
 import {
@@ -23,6 +24,7 @@ import {
 })
 export class StatsComponent {
   protected readonly delegateService = inject(DelegateService);
+  protected readonly db = inject(DatabaseService);
   protected readonly qrService = inject(QrService);
   protected readonly feedback = inject(FeedbackService);
 
@@ -52,7 +54,7 @@ export class StatsComponent {
   newPoliticalTheory: PoliticalTheoryType = 'Hoàn thành các bài LLCT';
   newSeatNumber = 'Dãy E - Ghế 05';
 
-  // Achievements flags (0/1) for new delegate
+  // Achievements flags for new delegate
   newDoanVienTieuBieu = false;
   newCanBoTieuBieu = false;
   newThanhNienLamTheoLoiBac = false;
@@ -65,84 +67,72 @@ export class StatsComponent {
   newSv5TotCapDhqg = false;
   newSv5TotCapThanhPho = false;
 
-  // Import Modal
-  readonly showImportModal = signal(false);
-  importRawText = '';
-
-  // Filtered Delegates
   readonly filteredDelegates = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
+    const list = this.delegateService.delegates();
+    const q = this.searchQuery().trim().toUpperCase();
     const unit = this.selectedUnit();
     const status = this.selectedStatus();
     const party = this.selectedParty();
 
-    return this.delegateService.delegates().filter(d => {
-      // Search match
-      const matchSearch = !query ||
-        d.fullName.toLowerCase().includes(query) ||
-        d.mssv.toLowerCase().includes(query) ||
-        d.id.toLowerCase().includes(query) ||
-        d.unit.toLowerCase().includes(query);
+    return list.filter(d => {
+      // Search text (MSSV, name, id)
+      if (q) {
+        const matchMssv = d.mssv.toUpperCase().includes(q);
+        const matchName = d.fullName.toUpperCase().includes(q);
+        const matchId = d.id.toUpperCase().includes(q);
+        if (!matchMssv && !matchName && !matchId) return false;
+      }
 
-      // Unit match
-      const matchUnit = unit === 'ALL' || d.unit === unit;
+      // Filter Unit
+      if (unit !== 'ALL' && d.unit !== unit) return false;
 
-      // Status match
-      const matchStatus = status === 'ALL' ||
-        (status === 'CHECKED' && d.checkedIn) ||
-        (status === 'ABSENT' && !d.checkedIn);
+      // Filter Check-in
+      if (status === 'CHECKED' && !d.checkedIn) return false;
+      if (status === 'ABSENT' && d.checkedIn) return false;
 
-      // Party match
-      const matchParty = party === 'ALL' ||
-        (party === 'PARTY' && d.isPartyMember === 1) ||
-        (party === 'DOAN' && d.isPartyMember === 0);
+      // Filter Party
+      if (party === 'PARTY' && d.isPartyMember !== 1) return false;
+      if (party === 'DOAN' && d.isPartyMember === 1) return false;
 
-      return matchSearch && matchUnit && matchStatus && matchParty;
+      return true;
     });
   });
 
-  calculateAge(dob: string): number {
-    return calculateAgeOnCongress(dob, CONGRESS_DATE);
-  }
+  readonly availableUnits = computed(() => {
+    const set = new Set<string>();
+    for (const d of this.delegateService.delegates()) {
+      set.add(d.unit);
+    }
+    return Array.from(set).sort();
+  });
 
   formatDob(dob: string): string {
     if (!dob) return '';
-    if (dob.includes('-')) {
-      const parts = dob.split('-');
+    const parts = dob.split('-');
+    if (parts.length === 3) {
       return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
     return dob;
   }
 
-  onToggle(mssv: string): void {
-    this.delegateService.toggleCheckIn(mssv);
-    const updated = this.delegateService.getDelegateByMssv(mssv);
-    if (updated?.checkedIn) {
-      this.feedback.playSuccessSound();
-      this.feedback.fireConfetti();
-    }
+  getAge(dob: string): number {
+    return calculateAgeOnCongress(dob, CONGRESS_DATE);
   }
 
-  async openQrModal(delegate: Delegate): Promise<void> {
+  toggleCheckIn(delegate: Delegate): void {
+    this.delegateService.toggleCheckIn(delegate.mssv);
+    this.feedback.playBeepSound();
+  }
+
+  async selectForVerification(delegate: Delegate): Promise<void> {
     this.previewDelegate.set(delegate);
     const qrUrl = await this.qrService.generateQrDataUrl(delegate);
     this.previewQrUrl.set(qrUrl);
   }
 
-  closeQrModal(): void {
+  closePreview(): void {
     this.previewDelegate.set(null);
     this.previewQrUrl.set(null);
-  }
-
-  downloadQr(delegate: Delegate): void {
-    if (this.previewQrUrl()) {
-      this.qrService.downloadQrPng(this.previewQrUrl()!, `QR_${delegate.mssv}_${delegate.fullName}.png`);
-    }
-  }
-
-  selectForVerification(delegate: Delegate): void {
-    this.delegateService.setCurrentDelegate(delegate);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   openAddModal(): void {
@@ -153,8 +143,11 @@ export class StatsComponent {
     this.showAddModal.set(false);
   }
 
-  submitAddDelegate(): void {
-    if (!this.newFullName.trim() || !this.newMssv.trim()) return;
+  saveNewDelegate(): void {
+    if (!this.newMssv.trim() || !this.newFullName.trim()) {
+      alert('Vui lòng nhập đầy đủ MSSV và Họ tên!');
+      return;
+    }
 
     this.delegateService.addDelegate({
       mssv: this.newMssv.trim().toUpperCase(),
@@ -168,9 +161,6 @@ export class StatsComponent {
       academicLevel: this.newAcademicLevel,
       politicalTheory: this.newPoliticalTheory,
       seatNumber: this.newSeatNumber,
-      avatarUrl: this.newGender === 'Nam'
-        ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80'
-        : 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
       achievements: {
         isDoanVienTieuBieu: this.newDoanVienTieuBieu ? 1 : 0,
         isCanBoTieuBieu: this.newCanBoTieuBieu ? 1 : 0,
@@ -187,87 +177,117 @@ export class StatsComponent {
     });
 
     this.feedback.playSuccessSound();
-    this.feedback.fireConfetti();
     this.closeAddModal();
-    this.newFullName = '';
-    this.newMssv = '';
   }
 
-  resetAllCheckIns(): void {
-    if (confirm('Bạn có chắc chắn muốn đặt lại toàn bộ điểm danh về trạng thái Chưa điểm danh?')) {
+  resetAllAttendance(): void {
+    if (confirm('Đồng chí có chắc chắn muốn đặt lại toàn bộ trạng thái điểm danh về CHƯA ĐIỂM DANH không?')) {
       this.delegateService.resetAllCheckIns();
+      this.feedback.playSuccessSound();
     }
   }
 
-  resetToDefaults(): void {
-    if (confirm('Khôi phục danh sách chuẩn 100 đại biểu mẫu ban đầu?')) {
+  resetToDefaultDatabase(): void {
+    if (confirm('Đồng chí có chắc chắn muốn khôi phục CSDL về 100 đại biểu mặc định ban đầu không?')) {
       this.delegateService.resetToDefaults();
       this.feedback.playSuccessSound();
-      alert('Đã khôi phục thành công danh sách 100 đại biểu mẫu!');
+      alert('Đã khôi phục CSDL thành công!');
     }
   }
 
-  exportJson(): void {
-    const list = this.delegateService.delegates();
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(list, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `database_100_dai_bieu_${new Date().toISOString().slice(0, 10)}.json`);
-    downloadAnchor.click();
+  exportJsonDatabase(): void {
+    const json = this.db.exportJson();
+    const blob = new Blob([json], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `CSDL_DoanVien_HTTT_${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
   }
 
-  onJsonFileSelected(event: Event): void {
+  onImportJsonFile(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
     const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const text = e.target?.result as string;
-        const parsed = JSON.parse(text);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          this.delegateService.importDelegates(parsed);
-          this.feedback.playSuccessSound();
-          alert(`Đã khôi phục thành công database với ${parsed.length} đại biểu!`);
-        } else {
-          alert('File JSON không hợp lệ hoặc danh sách rỗng.');
-        }
-      } catch {
-        alert('Lỗi đọc file JSON: Định dạng không đúng cấu trúc database đại biểu.');
-      } finally {
-        input.value = '';
+    reader.onload = () => {
+      const res = this.db.importJson(reader.result as string);
+      if (res.success) {
+        this.feedback.playSuccessSound();
+        alert(`Nhập thành công ${res.count} đại biểu vào cơ sở dữ liệu!`);
+      } else {
+        alert(`Lỗi nhập CSDL: ${res.error}`);
       }
     };
     reader.readAsText(file);
   }
 
+  exportJson(): void {
+    this.exportJsonDatabase();
+  }
+
+  onJsonFileSelected(event: Event): void {
+    this.onImportJsonFile(event);
+  }
+
+  resetToDefaults(): void {
+    this.resetToDefaultDatabase();
+  }
+
+  resetAllCheckIns(): void {
+    this.resetAllAttendance();
+  }
+
+  calculateAge(dob: string): number {
+    return this.getAge(dob);
+  }
+
+  onToggle(mssv: string): void {
+    this.delegateService.toggleCheckIn(mssv);
+  }
+
+  openQrModal(d: Delegate): void {
+    this.selectForVerification(d);
+  }
+
+  closeQrModal(): void {
+    this.closePreview();
+  }
+
+  async downloadQr(d: Delegate): Promise<void> {
+    const url = await this.qrService.generateQrDataUrl(d);
+    this.qrService.downloadQrPng(url, `QR_${d.mssv}.png`);
+  }
+
+  submitAddDelegate(): void {
+    this.saveNewDelegate();
+  }
+
   exportCsv(): void {
     const list = this.delegateService.delegates();
     const headers = [
-      'STT',
+      'Mã Đại Biểu',
       'MSSV',
       'Họ và Tên',
       'Chi đoàn',
       'Ngày sinh',
       'Tuổi (tại 17/01/2027)',
       'Giới tính',
-      'Đảng viên (0/1)',
+      'Tư cách chính trị',
       'Dân tộc',
       'Tôn giáo',
       'Trình độ chuyên môn',
       'Lý luận chính trị',
-      'Đoàn viên tiêu biểu (0/1)',
-      'Cán bộ Đoàn - Hội tiêu biểu (0/1)',
-      'Thanh niên KT-Luật làm theo lời Bác (0/1)',
-      'BTV Thành Đoàn (0/1)',
-      'Bằng khen TW Đoàn (0/1)',
-      'NCKH cấp Trường (0/1)',
-      'Đạt giải học thuật (0/1)',
-      'Văn thể mỹ (0/1)',
-      'SV5T cấp Trường (0/1)',
-      'SV5T cấp ĐHQG (0/1)',
-      'SV5T cấp Thành phố (0/1)',
+      'Đoàn viên tiêu biểu',
+      'Cán bộ Đoàn - Hội tiêu biểu',
+      'Thanh niên làm theo lời Bác',
+      'Cán bộ Thành Đoàn',
+      'Bằng khen TW Đoàn',
+      'NCKH cấp Trường',
+      'Đạt giải học thuật',
+      'Văn thể mỹ',
+      'SV5T cấp Trường',
+      'SV5T cấp ĐHQG',
+      'SV5T cấp Thành phố',
       'Vị trí ghế',
       'Trạng thái điểm danh',
       'Thời gian điểm danh'
@@ -281,22 +301,22 @@ export class StatsComponent {
       `"${d.dob}"`,
       `"${calculateAgeOnCongress(d.dob, CONGRESS_DATE)}"`,
       `"${d.gender}"`,
-      `"${d.isPartyMember}"`,
+      `"${d.isPartyMember === 1 ? 'Đảng viên' : 'Đoàn viên'}"`,
       `"${d.ethnicity}"`,
       `"${d.religion}"`,
       `"${d.academicLevel}"`,
       `"${d.politicalTheory}"`,
-      `"${d.achievements?.isDoanVienTieuBieu || 0}"`,
-      `"${d.achievements?.isCanBoTieuBieu || 0}"`,
-      `"${d.achievements?.isThanhNienLamTheoLoiBac || 0}"`,
-      `"${d.achievements?.isBtvThanhDoan || 0}"`,
-      `"${d.achievements?.isBangKhenTWDoan || 0}"`,
-      `"${d.achievements?.isNckhCapTruong || 0}"`,
-      `"${d.achievements?.isDatGiaiHocThuat || 0}"`,
-      `"${d.achievements?.isVanTheMy || 0}"`,
-      `"${d.achievements?.isSv5TotCapTruong || 0}"`,
-      `"${d.achievements?.isSv5TotCapDhqg || 0}"`,
-      `"${d.achievements?.isSv5TotCapThanhPho || 0}"`,
+      `"${d.achievements?.isDoanVienTieuBieu ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isCanBoTieuBieu ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isThanhNienLamTheoLoiBac ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isBtvThanhDoan ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isBangKhenTWDoan ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isNckhCapTruong ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isDatGiaiHocThuat ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isVanTheMy ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isSv5TotCapTruong ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isSv5TotCapDhqg ? 'Đạt' : 'Không'}"`,
+      `"${d.achievements?.isSv5TotCapThanhPho ? 'Đạt' : 'Không'}"`,
       `"${d.seatNumber || ''}"`,
       `"${d.checkedIn ? 'Đã điểm danh' : 'Chưa đến'}"`,
       `"${d.checkInTime || ''}"`
@@ -306,7 +326,7 @@ export class StatsComponent {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `Bao_cao_100_dai_bieu_dai_hoi_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `Bao_cao_dai_bieu_HTTT_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
   }
 }
