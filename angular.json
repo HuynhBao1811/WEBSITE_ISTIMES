@@ -51,7 +51,7 @@
               }
             ],
             "styles": ["src/styles.css"],
-            "allowedCommonJsDependencies": ["qrcode"]
+            "allowedCommonJsDependencies": ["qrcode", "jsqr"]
           },
           "configurations": {
             "production": {

@@ -101,7 +101,7 @@
             <p>Bấm nút bên dưới để mở camera quét trực tiếp hoặc chọn ảnh mã QR từ thiết bị</p>
 
             <div class="placeholder-actions">
-              <button type="button" class="btn-start-camera" (click)="startCamera()">
+              <button type="button" class="btn-start-camera" (click)="startCamera()" [disabled]="isStarting()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polygon points="5 3 19 12 5 21 5 3"></polygon>
                 </svg>
@@ -132,18 +132,12 @@
             <div class="camera-lens-indicator">
               {{ preferredFacingMode() === 'user' ? '🤳 Camera Trước' : '📷 Camera Sau Điện Thoại' }}
             </div>
-            <div class="target-frame" [class.success-pulse]="isScanSuccessPulse()">
-              <div class="corner tl"></div>
-              <div class="corner tr"></div>
-              <div class="corner bl"></div>
-              <div class="corner br"></div>
-              <div class="laser-scanner-line"></div>
-            </div>
+            <div class="full-frame-status" [class.success-pulse]="isScanSuccessPulse()" aria-hidden="true"></div>
             <div class="scan-hint-text">
               @if (isScanSuccessPulse()) {
                 <span class="scan-captured-text">⚡ ĐÃ NHẬN DIỆN MÃ QR!</span>
               } @else {
-                <span>Căn chỉnh mã QR vào giữa khung (Quét siêu tốc 25 FPS)</span>
+                <span>Quét toàn hình camera — không cần căn mã vừa khung. Giữ đủ mã QR và viền trắng, tránh chói.</span>
               }
             </div>
           </div>

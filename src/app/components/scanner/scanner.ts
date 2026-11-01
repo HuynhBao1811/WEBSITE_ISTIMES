@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   Html5Qrcode,
-  Html5QrcodeCameraScanConfig,
   Html5QrcodeSupportedFormats
 } from 'html5-qrcode';
 import { DelegateService } from '../../services/delegate.service';
@@ -19,6 +18,8 @@ import { FeedbackService } from '../../services/feedback.service';
 import { QrService } from '../../services/qr.service';
 import { DelegateCardComponent } from '../delegate-card/delegate-card';
 import { Delegate } from '../../models/delegate.model';
+import { createScanConfig } from './scanner-config';
+import { FullFrameReader } from './full-frame-reader';
 
 @Component({
   selector: 'app-scanner',
@@ -36,6 +37,10 @@ export class ScannerComponent implements OnInit, OnDestroy {
 
   // Component state
   readonly isCameraScanning = signal(false);
+  readonly isStarting = signal(false);
+  private fullFrameReader?: FullFrameReader;
+  private lastCameraRead = 0;
+  private destroyed = false;
   readonly cameraErrorMessage = signal<string | null>(null);
   readonly scanNotification = signal<{ type: 'success' | 'warning' | 'error'; message: string } | null>(null);
   readonly manualCode = signal('');
@@ -151,6 +156,8 @@ export class ScannerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
+    this.fullFrameReader?.stop();
     this.stopCamera();
   }
 
@@ -188,13 +195,14 @@ export class ScannerComponent implements OnInit, OnDestroy {
   }
 
   async startCamera(): Promise<void> {
+    if (this.isStarting() || this.isCameraScanning() || this.destroyed) return;
+    this.isStarting.set(true);
     this.cameraErrorMessage.set(null);
     try {
       if (!this.html5QrCode) {
         // Ultra-sensitive setup: Only QR format + Native browser BarcodeDetector API for instant hardware scan
         this.html5QrCode = new Html5Qrcode(this.scannerElementId, {
           formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-          useBarCodeDetectorIfSupported: true,
           experimentalFeatures: {
             useBarCodeDetectorIfSupported: true
           },
@@ -208,20 +216,13 @@ export class ScannerComponent implements OnInit, OnDestroy {
         ? { deviceId: { exact: cameraId } }
         : { facingMode: { ideal: this.preferredFacingMode() } };
 
-      const scanConfig: Html5QrcodeCameraScanConfig = {
-        fps: 25, // 25 scans per second for high responsiveness
-        disableFlip: false, // Detects both standard and mirrored QR codes
-        videoConstraints: {
-          facingMode: { ideal: this.preferredFacingMode() },
-          width: { min: 640, ideal: 1280, max: 1920 },
-          height: { min: 480, ideal: 720, max: 1080 }
-        }
-      };
+      const scanConfig = createScanConfig(cameraId, this.preferredFacingMode());
 
       await this.html5QrCode.start(
         cameraConfig,
         scanConfig,
         (decodedText: string) => {
+          this.lastCameraRead = performance.now();
           this.handleScannedCode(decodedText);
         },
         () => {
@@ -229,7 +230,23 @@ export class ScannerComponent implements OnInit, OnDestroy {
         }
       );
 
+      if (this.destroyed) { await this.html5QrCode.stop(); return; }
       this.isCameraScanning.set(true);
+      // Continuous focus is optional: unsupported devices must still scan.
+      const video = document.querySelector<HTMLVideoElement>('#qr-reader-container video');
+      this.fullFrameReader?.stop();
+      if (video) {
+        this.lastCameraRead = 0;
+        this.fullFrameReader = new FullFrameReader(video, code => this.handleScannedCode(code),
+          () => performance.now() - this.lastCameraRead > 700);
+        this.fullFrameReader.start();
+      }
+      const track = (video?.srcObject as MediaStream | null)?.getVideoTracks()[0];
+      const capabilities = track?.getCapabilities?.() as (MediaTrackCapabilities & {focusMode?: string[]}) | undefined;
+      if (capabilities?.focusMode?.includes('continuous')) {
+        try { await track?.applyConstraints({advanced: [{focusMode: 'continuous'} as MediaTrackConstraintSet]}); }
+        catch { /* Some cameras advertise focus but reject changes. */ }
+      }
 
       // Refresh camera devices list now that permission is granted
       this.initCameraList();
@@ -246,10 +263,11 @@ export class ScannerComponent implements OnInit, OnDestroy {
       );
       this.isCameraScanning.set(false);
       console.error('Camera scan error:', msg);
-    }
+    } finally { this.isStarting.set(false); }
   }
 
   async stopCamera(): Promise<void> {
+    this.fullFrameReader?.stop();
     if (this.html5QrCode && this.isCameraScanning()) {
       try {
         await this.html5QrCode.stop();
@@ -277,11 +295,11 @@ export class ScannerComponent implements OnInit, OnDestroy {
     this.lastScannedCode = rawCode;
     this.lastScannedTime = now;
 
-    // Flash green pulse on scan frame for instant tactile feedback
-    this.isScanSuccessPulse.set(true);
-    setTimeout(() => this.isScanSuccessPulse.set(false), 700);
-
     const result = this.delegateService.parseQrCode(rawCode);
+    if (result.success) {
+      this.isScanSuccessPulse.set(true);
+      setTimeout(() => this.isScanSuccessPulse.set(false), 700);
+    }
 
     if (result.success && result.delegate) {
       if (result.alreadyCheckedIn) {

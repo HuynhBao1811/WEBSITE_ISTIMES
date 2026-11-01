@@ -224,7 +224,7 @@
 
 .html5-qr-reader {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   border: none !important;
   display: flex !important;
   align-items: center !important;
@@ -234,8 +234,8 @@
 
 .html5-qr-reader video {
   width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
+  height: auto !important;
+  object-fit: contain !important;
   display: block !important;
   margin: 0 auto !important;
 }
@@ -983,3 +983,13 @@
   }
 }
 
+
+/* The decoder measures the displayed video: preserve its natural aspect ratio.
+   Do not stretch a video to the fixed placeholder height or crop it with cover. */
+.viewport-wrapper {display: block; height: auto; min-height: 380px;}
+.viewport-wrapper:has(video) {min-height: 0;}
+.camera-placeholder {position: absolute; inset: 0; max-width: none;}
+.full-frame-status {position: absolute; inset: 0; border: 3px solid transparent; pointer-events: none;}
+.full-frame-status.success-pulse {border-color: #10b981;}
+.scan-hint-text {max-width: calc(100% - 24px); white-space: normal; text-align: center;}
+@media (max-width: 640px) {.viewport-wrapper {height: auto; min-height: 340px;} .viewport-wrapper:has(video) {min-height: 0;}}

@@ -80,7 +80,7 @@ button, input, select, textarea {
 #qr-reader-container,
 .html5-qr-reader {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   position: relative !important;
   border: none !important;
   display: flex !important;
@@ -93,8 +93,8 @@ button, input, select, textarea {
 #qr-reader-container video,
 .html5-qr-reader video {
   width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
+  height: auto !important;
+  object-fit: contain !important;
   display: block !important;
   margin: 0 auto !important;
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
