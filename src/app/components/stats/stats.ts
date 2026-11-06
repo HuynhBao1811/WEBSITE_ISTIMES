@@ -5,6 +5,14 @@ import { DelegateService } from '../../services/delegate.service';
 import { DatabaseService } from '../../services/database.service';
 import { QrService } from '../../services/qr.service';
 import { FeedbackService } from '../../services/feedback.service';
+import { AuthService, authHeaders } from '../../services/auth.service';
+import { getApiBase } from '../../services/api-config';
+
+interface AdminEntry {
+  email: string;
+  builtIn: boolean;
+  grantedBy?: string;
+}
 import {
   Delegate,
   calculateAgeOnCongress,
@@ -23,6 +31,93 @@ import {
   styleUrl: './stats.css'
 })
 export class StatsComponent {
+  protected readonly auth = inject(AuthService);
+  readonly deleteTarget = signal<Delegate | null>(null);
+  readonly deleting = signal(false);
+  readonly actionError = signal<string | null>(null);
+  readonly actionSuccess = signal<string | null>(null);
+  readonly showAdmins = signal(false);
+  readonly admins = signal<AdminEntry[]>([]);
+  readonly loadingAdmins = signal(false);
+  readonly grantingAdmin = signal(false);
+  readonly adminError = signal<string | null>(null);
+  readonly adminSuccess = signal<string | null>(null);
+  newAdminEmail = '';
+
+  requestDelete(delegate: Delegate): void {
+    if (!this.auth.isAdmin() || this.deleting()) return;
+    this.actionError.set(null);
+    this.actionSuccess.set(null);
+    this.deleteTarget.set(delegate);
+  }
+
+  cancelDelete(): void {
+    if (!this.deleting()) this.deleteTarget.set(null);
+  }
+
+  async confirmDelete(): Promise<void> {
+    const target = this.deleteTarget();
+    if (!target || !this.auth.isAdmin() || this.deleting()) return;
+    this.deleting.set(true);
+    this.actionError.set(null);
+    try {
+      await this.db.delete(target.mssv);
+      if (this.previewDelegate()?.mssv === target.mssv) this.closePreview();
+      if (this.delegateService.currentScannedDelegate()?.mssv === target.mssv) {
+        this.delegateService.currentScannedDelegate.set(null);
+      }
+      this.deleteTarget.set(null);
+      this.actionSuccess.set(`Đã xóa đại biểu ${target.fullName} (${target.mssv}).`);
+      this.feedback.playSuccessSound();
+    } catch (err) {
+      this.actionError.set(err instanceof Error ? err.message : 'Không thể xóa đại biểu.');
+    } finally { this.deleting.set(false); }
+  }
+
+  async openAdminManagement(): Promise<void> {
+    if (!this.auth.isAdmin()) return;
+    this.showAdmins.set(true);
+    this.adminError.set(null);
+    this.adminSuccess.set(null);
+    await this.loadAdmins();
+  }
+
+  private async loadAdmins(): Promise<void> {
+    this.loadingAdmins.set(true);
+    try {
+      const res = await fetch(`${getApiBase()}/auth/admins`, { headers: authHeaders(), signal: AbortSignal.timeout(15000) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Không thể tải danh sách quản trị viên.');
+      this.admins.set(data.admins);
+    } catch (err) {
+      this.adminError.set(err instanceof Error ? err.message : 'Không thể tải danh sách quản trị viên.');
+    } finally { this.loadingAdmins.set(false); }
+  }
+
+  async addAdmin(): Promise<void> {
+    if (!this.auth.isAdmin() || this.grantingAdmin()) return;
+    const email = this.newAdminEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+      this.adminError.set('Vui lòng nhập địa chỉ email hợp lệ.');
+      return;
+    }
+    this.adminError.set(null);
+    this.adminSuccess.set(null);
+    this.grantingAdmin.set(true);
+    try {
+      const res = await fetch(`${getApiBase()}/auth/admins`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ email }), signal: AbortSignal.timeout(15000)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Không thể cấp quyền quản trị viên.');
+      this.adminSuccess.set(data.message);
+      this.newAdminEmail = '';
+      await this.loadAdmins();
+    } catch (err) {
+      this.adminError.set(err instanceof Error ? err.message : 'Không thể cấp quyền quản trị viên.');
+    } finally { this.grantingAdmin.set(false); }
+  }
   protected readonly delegateService = inject(DelegateService);
   protected readonly db = inject(DatabaseService);
   protected readonly qrService = inject(QrService);

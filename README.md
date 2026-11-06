@@ -43,7 +43,11 @@
 2. Tạo `backend/.env` theo `backend/.env.example`, điền kết nối MongoDB, Google OAuth Client ID và Client Secret (loại **Web application**).
 3. Trong [Google Cloud → Google Auth Platform → Clients](https://console.cloud.google.com/auth/clients), chọn client tương ứng và thêm **Authorized redirect URI** chính xác: `http://localhost:5001/api/auth/google/callback`.
 4. Chạy `npm run server` và `npm run start:local` ở hai cửa sổ, mở `http://localhost:4200`.
-5. Bấm **Đăng Nhập → Đăng nhập với Google**. Google luôn yêu cầu chọn tài khoản. Sau khi xác thực, hai email `ducnh234112e@st.uel.edu.vn` và `baohgk24411e@st.uel.edu.vn` là admin; tất cả email khác là user, kể cả tài khoản cũ từng được lưu role admin.
+5. Bấm **Đăng Nhập → Đăng nhập với Google**. Google luôn yêu cầu chọn tài khoản. Hai email `ducnh234112e@st.uel.edu.vn` và `baohgk24411e@st.uel.edu.vn` là admin ban đầu. Email khác mặc định là user, trừ khi được admin cấp quyền trong Dashboard → **Quản lý quản trị viên**.
+
+Admin nhập email Google trong **Quản lý quản trị viên → Cấp quyền admin**. Có thể cấp trước lần đăng nhập đầu tiên; quyền được lưu tại collection `admin_grants`, kèm email người cấp và thời gian. Admin mới có thể cấp quyền tiếp cho người khác. Người đang đăng nhập cần tải lại trang để cập nhật giao diện. Backend tra cứu quyền trên mỗi yêu cầu, không tin trường role từ trình duyệt hoặc role cũ không có bản ghi cấp quyền.
+
+Để xóa đại biểu, bấm biểu tượng thùng rác ở cột thao tác trong Dashboard, kiểm tra tên/MSSV rồi xác nhận **Xóa đại biểu**. Danh sách và số liệu chỉ cập nhật sau khi máy chủ xóa thành công. Thao tác xóa không thể hoàn tác.
 
 Luồng dùng authorization code, PKCE, state/cookie và nonce; backend kiểm tra chữ ký ID token, audience và email đã xác minh trước khi cập nhật collection `user`. Phiên đăng nhập tồn tại 7 ngày, chỉ lưu mã băm trong collection `auth_sessions`, bị thu hồi khi đăng xuất. Dữ liệu hồ sơ/role cũ trong LocalStorage không được dùng để xác thực. Không còn đăng nhập chỉ bằng email hoặc cửa sổ chọn tài khoản mô phỏng.
 

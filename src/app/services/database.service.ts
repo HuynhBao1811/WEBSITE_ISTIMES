@@ -87,7 +87,7 @@ export class DatabaseService {
     const list = this.delegates();
     const cleanMssv = delegateData.mssv.trim().toUpperCase();
 
-    const nextIdNum = list.length + 1;
+    const nextIdNum = Math.max(0, ...list.map(d => Number(d.id.match(/^ĐB-(\d+)$/)?.[1] || 0))) + 1;
     const newId = `ĐB-${String(nextIdNum).padStart(3, '0')}`;
     const newRecord: Delegate = {
       ...delegateData,
@@ -134,24 +134,18 @@ export class DatabaseService {
   /**
    * Xóa đại biểu khỏi MongoDB
    */
-  delete(mssvOrId: string): boolean {
+  async delete(mssvOrId: string): Promise<void> {
     const clean = mssvOrId.trim().toUpperCase();
-    const list = this.delegates();
-    const filtered = list.filter(d =>
+    const res = await fetch(`${getApiBase()}/delegates/${encodeURIComponent(clean)}`, {
+      method: 'DELETE', headers: authHeaders(), signal: AbortSignal.timeout(15000)
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'Không thể xóa đại biểu. Vui lòng thử lại.');
+    // Update the screen only after the server confirms deletion.
+    this.delegatesState.update(list => list.filter(d =>
       d.mssv.toUpperCase() !== clean && d.id.toUpperCase() !== clean
-    );
-    if (filtered.length !== list.length) {
-      this.delegatesState.set(filtered);
-      this.lastUpdatedState.set(new Date().toISOString());
-
-      const api = getApiBase();
-      fetch(`${api}/delegates/${encodeURIComponent(clean)}`, {
-        method: 'DELETE', headers: authHeaders()
-      }).catch(err => console.error('Lỗi xóa đại biểu trên MongoDB:', err));
-
-      return true;
-    }
-    return false;
+    ));
+    this.lastUpdatedState.set(new Date().toISOString());
   }
 
   /**

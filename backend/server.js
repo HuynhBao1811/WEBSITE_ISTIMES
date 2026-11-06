@@ -5,6 +5,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { createAuth } = require('./auth');
+const { deleteDelegate } = require('./delegate-actions');
 const frontendOrigins = (process.env.FRONTEND_ORIGINS || 'http://localhost:4200,http://127.0.0.1:4200').split(',').map(s => s.trim()).filter(Boolean);
 
 const app = express();
@@ -87,8 +88,13 @@ const sessionSchema = new mongoose.Schema({
   expiresAt: { type: Date, required: true, expires: 0 }
 }, { collection: 'auth_sessions' });
 const Session = mongoose.model('AuthSession', sessionSchema);
+const AdminGrant = mongoose.model('AdminGrant', new mongoose.Schema({
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  grantedBy: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+}, { collection: 'admin_grants' }));
 const { router: authRouter, requireUser, requireAdmin } = createAuth({
-  User, Session, config: {
+  User, Session, AdminGrant, config: {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     redirectUri: process.env.GOOGLE_REDIRECT_URI,
@@ -180,15 +186,7 @@ app.put('/api/delegates/:mssv', requireUser, async (req, res) => {
 });
 
 // DELETE /api/delegates/:mssv - Xóa đại biểu khỏi MongoDB
-app.delete('/api/delegates/:mssv', requireAdmin, async (req, res) => {
-  try {
-    const query = req.params.mssv.trim().toUpperCase();
-    await Delegate.findOneAndDelete({ $or: [{ mssv: query }, { id: query }] });
-    res.json({ success: true, message: 'Đã xóa đại biểu thành công.' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+app.delete('/api/delegates/:mssv', requireAdmin, deleteDelegate(Delegate));
 
 // POST /api/delegates/toggle-checkin - Điểm danh đại biểu trên MongoDB
 app.post('/api/delegates/toggle-checkin', requireAdmin, async (req, res) => {

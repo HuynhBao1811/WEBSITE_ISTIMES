@@ -5,14 +5,16 @@ const { OAuth2Client } = require('google-auth-library');
 const ADMIN_EMAILS = ['ducnh234112e@st.uel.edu.vn', 'baohgk24411e@st.uel.edu.vn'];
 const roleForEmail = email => ADMIN_EMAILS.includes(email.trim().toLowerCase()) ? 'admin' : 'user';
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
-const publicUser = user => ({
+const publicUser = (user, role) => ({
   id: String(user._id), email: user.email, fullName: user.fullName,
-  role: roleForEmail(user.email), avatarUrl: user.avatarUrl, provider: 'google'
+  role, avatarUrl: user.avatarUrl, provider: 'google'
 });
 
-function createAuth({ User, Session, config, googleClient }) {
+function createAuth({ User, Session, AdminGrant, config, googleClient }) {
   const router = express.Router();
   const attempts = new Map();
+  const effectiveRole = async email => roleForEmail(email) === 'admin' ||
+    (AdminGrant && await AdminGrant.findOne({ email: email.trim().toLowerCase() })) ? 'admin' : 'user';
   const configured = () => Boolean(config.clientId && config.clientSecret && config.redirectUri);
   const client = googleClient || new OAuth2Client(config.clientId, config.clientSecret, config.redirectUri);
   const cookieName = 'istimes_oauth_state';
@@ -76,9 +78,10 @@ function createAuth({ User, Session, config, googleClient }) {
         throw new Error('Invalid Google identity');
       }
       const email = profile.email.trim().toLowerCase();
+      const role = await effectiveRole(email);
       const user = await User.findOneAndUpdate({ email }, { $set: {
         email, fullName: profile.name || email.split('@')[0], avatarUrl: profile.picture || '',
-        googleId: profile.sub, provider: 'google', role: roleForEmail(email), lastLogin: new Date()
+        googleId: profile.sub, provider: 'google', role, lastLogin: new Date()
       } }, { upsert: true, new: true, runValidators: true });
       const token = crypto.randomBytes(32).toString('hex');
       await Session.create({ tokenHash: hash(token), userId: user._id, expiresAt: new Date(Date.now() + 7 * 86400000) });
@@ -96,7 +99,7 @@ function createAuth({ User, Session, config, googleClient }) {
       const session = await Session.findOne({ tokenHash: hash(token), expiresAt: { $gt: new Date() } });
       const user = session && await User.findById(session.userId);
       if (!user) return res.status(401).json({ message: 'Phiên đăng nhập đã hết hạn.' });
-      req.authUser = publicUser(user);
+      req.authUser = publicUser(user, await effectiveRole(user.email));
       req.authTokenHash = hash(token);
       next();
     } catch {
@@ -107,6 +110,31 @@ function createAuth({ User, Session, config, googleClient }) {
     if (req.authUser.role !== 'admin') return res.status(403).json({ message: 'Chỉ quản trị viên được thực hiện thao tác này.' });
     next();
   }];
+  router.get('/auth/admins', requireAdmin, async (_req, res) => {
+    try {
+      const grants = await AdminGrant.find().sort({ createdAt: -1 }).lean();
+      res.set('Cache-Control', 'no-store');
+      res.json({ admins: [
+        ...ADMIN_EMAILS.map(email => ({ email, builtIn: true })),
+        ...grants.filter(g => !ADMIN_EMAILS.includes(g.email)).map(g => ({
+          email: g.email, grantedBy: g.grantedBy, createdAt: g.createdAt, builtIn: false
+        }))
+      ] });
+    } catch { res.status(503).json({ message: 'Chưa thể tải danh sách quản trị viên.' }); }
+  });
+  router.post('/auth/admins', requireAdmin, async (req, res) => {
+    const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ message: 'Vui lòng nhập địa chỉ email hợp lệ.' });
+    }
+    if (ADMIN_EMAILS.includes(email)) return res.json({ success: true, message: 'Email này đã là quản trị viên.' });
+    try {
+      await AdminGrant.findOneAndUpdate({ email }, { $setOnInsert: {
+        email, grantedBy: req.authUser.email, createdAt: new Date()
+      } }, { upsert: true, new: true, runValidators: true });
+      res.json({ success: true, message: `Đã cấp quyền quản trị viên cho ${email}.` });
+    } catch { res.status(503).json({ message: 'Chưa thể cấp quyền quản trị viên. Vui lòng thử lại.' }); }
+  });
   router.get('/auth/me', requireUser, (req, res) => {
     res.set('Cache-Control', 'no-store');
     res.json({ user: req.authUser });

@@ -1,4 +1,10 @@
 <div class="stats-container">
+  @if (auth.isAdmin()) {
+    <div class="admin-management-bar">
+      <button type="button" class="btn btn-primary" (click)="openAdminManagement()">Quản lý quản trị viên</button>
+    </div>
+  }
+  @if (actionSuccess()) { <p class="management-success" role="status">{{ actionSuccess() }}</p> }
   <!-- Section 1: Age & Overall Attendance Banner (Calculated on 17/01/2027) -->
   <div class="congress-date-banner">
     <div class="date-badge">
@@ -475,6 +481,15 @@
 
               <!-- Actions -->
               <td class="cell-actions">
+                @if (auth.isAdmin()) {
+                  <button type="button" class="action-btn btn-delete-delegate"
+                    (click)="requestDelete(d)" [disabled]="deleting()" [attr.aria-label]="'Xóa đại biểu ' + d.fullName"
+                    title="Xóa đại biểu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6"></path>
+                    </svg>
+                  </button>
+                }
                 <button
                   type="button"
                   class="action-btn btn-view-card"
@@ -522,6 +537,55 @@
       <span class="footer-tip">💡 Mã QR của đại biểu được tạo trực tiếp từ MSSV để gửi đi cho các đại biểu</span>
     </div>
   </div>
+
+  @if (deleteTarget(); as target) {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-delegate-title" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3 id="delete-delegate-title">XÓA ĐẠI BIỂU</h3>
+          <button type="button" class="modal-close-btn" (click)="cancelDelete()" [disabled]="deleting()" aria-label="Đóng">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Bạn muốn xóa đại biểu <strong>{{ target.fullName }}</strong> (MSSV: <strong>{{ target.mssv }}</strong>)?</p>
+          <p>Dữ liệu và trạng thái điểm danh của đại biểu sẽ bị xóa. Thao tác này không thể hoàn tác.</p>
+          @if (actionError()) { <p class="management-error" role="alert">{{ actionError() }}</p> }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cancelDelete()" [disabled]="deleting()">Hủy</button>
+          <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="deleting()">{{ deleting() ? 'Đang xóa...' : 'Xóa đại biểu' }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showAdmins() && auth.isAdmin()) {
+    <div class="modal-backdrop" (click)="!grantingAdmin() && showAdmins.set(false)">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="admin-management-title" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3 id="admin-management-title">QUẢN LÝ QUẢN TRỊ VIÊN</h3>
+          <button type="button" class="modal-close-btn" (click)="showAdmins.set(false)" [disabled]="grantingAdmin()" aria-label="Đóng">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Nhập email Google của người cần cấp quyền. Quản trị viên mới có thể quản lý đại biểu và cấp quyền admin cho người khác.</p>
+          <form class="admin-grant-form" (ngSubmit)="addAdmin()">
+            <label for="new-admin-email">Email quản trị viên mới</label>
+            <input id="new-admin-email" name="newAdminEmail" class="form-control" type="email" [(ngModel)]="newAdminEmail" required maxlength="254" placeholder="ten@gmail.com" [disabled]="grantingAdmin()" />
+            <button type="submit" class="btn btn-primary" [disabled]="grantingAdmin() || !newAdminEmail.trim()">{{ grantingAdmin() ? 'Đang cấp quyền...' : 'Cấp quyền admin' }}</button>
+          </form>
+          @if (adminError()) { <p class="management-error" role="alert">{{ adminError() }}</p> }
+          @if (adminSuccess()) { <p class="management-success" role="status">{{ adminSuccess() }}</p> }
+          <h4>Danh sách quản trị viên</h4>
+          @if (loadingAdmins()) { <p role="status">Đang tải danh sách...</p> }
+          <ul class="admin-list">
+            @for (admin of admins(); track admin.email) {
+              <li><strong>{{ admin.email }}</strong><span>{{ admin.builtIn ? 'Admin ban đầu' : 'Được cấp bởi ' + admin.grantedBy }}</span></li>
+            }
+          </ul>
+          <p>Người được cấp quyền dùng đúng email này để đăng nhập Google. Nếu đang đăng nhập, hãy tải lại trang để cập nhật giao diện.</p>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- QR Code Modal Dialog (with Download PNG) -->
   @if (previewDelegate(); as d) {

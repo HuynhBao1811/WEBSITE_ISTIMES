@@ -1039,3 +1039,14 @@
   }
 }
 
+.admin-management-bar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+.admin-grant-form { display: grid; gap: 12px; margin: 20px 0; }
+.admin-list { padding: 0; list-style: none; }
+.admin-list li { display: grid; gap: 5px; padding: 12px 0; border-bottom: 1px solid #e2e8f0; overflow-wrap: anywhere; }
+.admin-list li span { color: #64748b; font-size: 12px; }
+.management-error { padding: 12px; color: #991b1b; background: #fef2f2; border-radius: 8px; }
+.management-success { padding: 12px; color: #166534; background: #f0fdf4; border-radius: 8px; }
+.btn-danger { background: #b91c1c; color: white; }
+.btn-delete-delegate { color: #b91c1c; background: #fef2f2; }
+.btn-delete-delegate:hover { background: #fee2e2; }
+button:disabled { cursor: wait; opacity: .6; }

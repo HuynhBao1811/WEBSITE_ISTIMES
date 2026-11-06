@@ -3,10 +3,13 @@ const assert = require('node:assert/strict');
 const express = require('express');
 const crypto = require('crypto');
 const { createAuth, roleForEmail } = require('./auth');
+const { deleteDelegate } = require('./delegate-actions');
 
 async function fixture(t, email = 'student@gmail.com', options = {}) {
   const users = new Map();
   const sessions = new Map();
+  const grants = new Map();
+  const delegates = new Map([['K123', { mssv: 'K123', id: 'DB-001' }]]);
   let nonce;
   let verified = 0;
   const client = {
@@ -23,7 +26,7 @@ async function fixture(t, email = 'student@gmail.com', options = {}) {
   const User = {
     findOneAndUpdate: async (_query, update) => {
       if (options.databaseFailure) throw new Error('Database offline');
-      const user = { _id: 'user-id', ...update.$set }; users.set(user._id, user); return user;
+      const user = { _id: update.$set.email, ...update.$set }; users.set(user._id, user); return user;
     },
     findById: async id => users.get(id)
   };
@@ -36,11 +39,28 @@ async function fixture(t, email = 'student@gmail.com', options = {}) {
     deleteOne: async query => sessions.delete(query.tokenHash)
   };
   const app = express(); app.use(express.json());
-  const auth = createAuth({ User, Session, googleClient: client, config: {
+  const AdminGrant = {
+    findOne: async query => grants.get(query.email),
+    find: () => ({ sort: () => ({ lean: async () => [...grants.values()] }) }),
+    findOneAndUpdate: async (query, update) => {
+      if (!grants.has(query.email)) grants.set(query.email, update.$setOnInsert);
+      return grants.get(query.email);
+    }
+  };
+  const auth = createAuth({ User, Session, AdminGrant, googleClient: client, config: {
     clientId: 'test-client', clientSecret: 'test-secret', redirectUri: 'http://localhost/callback', origins: ['http://localhost:4200']
   } });
   app.use('/api', auth.router);
   app.post('/admin', auth.requireAdmin, (_req, res) => res.json({ success: true }));
+  app.delete('/api/delegates/:mssv', auth.requireAdmin, deleteDelegate({
+    findOneAndDelete: async query => {
+      if (options.deleteFailure) throw new Error('DB offline');
+      const key = [...delegates.keys()].find(k => k === query.$or[0].mssv || delegates.get(k).id === query.$or[1].id);
+      const found = delegates.get(key);
+      delegates.delete(key);
+      return found;
+    }
+  }));
   const server = app.listen(0, '127.0.0.1');
   await new Promise(resolve => server.once('listening', resolve));
   t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
@@ -61,7 +81,7 @@ async function fixture(t, email = 'student@gmail.com', options = {}) {
     const token = html.match(/"token":"([a-f0-9]{64})"/)?.[1];
     return { res, html, token };
   };
-  return { request, start, callback, sessions, users, verified: () => verified };
+  return { request, start, callback, sessions, users, grants, delegates, setEmail: value => { email = value; }, verified: () => verified };
 }
 
 test('only the exact two configured emails are admins', () => {
@@ -115,4 +135,54 @@ test('expired sessions cannot authorize admin requests', async t => {
   const { token } = await f.callback(await f.start());
   for (const session of f.sessions.values()) session.expiresAt = new Date(0);
   assert.equal((await f.request('/admin', { method: 'POST', headers: { Authorization: `Bearer ${token}` } })).status, 401);
+});
+
+test('admin grants persist through Google login and new admins can grant others', async t => {
+  const f = await fixture(t, 'ducnh234112e@st.uel.edu.vn');
+  const initial = await f.callback(await f.start());
+  const headers = { Authorization: `Bearer ${initial.token}`, 'Content-Type': 'application/json' };
+  const grant = await f.request('/api/auth/admins', { method: 'POST', headers, body: JSON.stringify({ email: ' New.Admin@Gmail.com ' }) });
+  assert.equal(grant.status, 200);
+  assert.equal(f.grants.get('new.admin@gmail.com').grantedBy, 'ducnh234112e@st.uel.edu.vn');
+  await f.request('/api/auth/admins', { method: 'POST', headers, body: JSON.stringify({ email: 'new.admin@gmail.com' }) });
+  assert.equal(f.grants.size, 1);
+  assert.equal((await f.request('/api/auth/admins', { method: 'POST', headers, body: JSON.stringify({ email: { $ne: '' } }) })).status, 400);
+  f.setEmail('new.admin@gmail.com');
+  const added = await f.callback(await f.start());
+  const addedHeaders = { Authorization: `Bearer ${added.token}`, 'Content-Type': 'application/json' };
+  assert.equal((await (await f.request('/api/auth/me', { headers: addedHeaders })).json()).user.role, 'admin');
+  assert.equal((await f.request('/api/auth/admins', { method: 'POST', headers: addedHeaders, body: JSON.stringify({ email: 'third@gmail.com' }) })).status, 200);
+  const list = await (await f.request('/api/auth/admins', { headers: addedHeaders })).json();
+  assert.equal(list.admins.length, 4);
+  const again = await f.callback(await f.start());
+  assert.equal((await f.request('/admin', { method: 'POST', headers: { Authorization: `Bearer ${again.token}` } })).status, 200);
+});
+
+test('ordinary users cannot list or grant admins, forge roles, or delete delegates', async t => {
+  const f = await fixture(t);
+  const { token } = await f.callback(await f.start());
+  f.users.get('student@gmail.com').role = 'admin';
+  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+  assert.equal((await f.request('/api/auth/admins', { headers })).status, 403);
+  assert.equal((await f.request('/api/auth/admins', { method: 'POST', headers, body: JSON.stringify({ email: 'student@gmail.com' }) })).status, 403);
+  assert.equal((await f.request('/api/delegates/K123', { method: 'DELETE', headers })).status, 403);
+  assert.equal(f.grants.size, 0);
+  assert.equal(f.delegates.size, 1);
+});
+
+test('admin deletion removes the selected delegate and reports missing records', async t => {
+  const f = await fixture(t, 'baohgk24411e@st.uel.edu.vn');
+  assert.equal((await f.request('/api/delegates/K123', { method: 'DELETE' })).status, 401);
+  const { token } = await f.callback(await f.start());
+  const headers = { Authorization: `Bearer ${token}` };
+  assert.equal((await f.request('/api/delegates/k123', { method: 'DELETE', headers })).status, 200);
+  assert.equal(f.delegates.size, 0);
+  assert.equal((await f.request('/api/delegates/K123', { method: 'DELETE', headers })).status, 404);
+});
+
+test('failed deletion preserves delegate data', async t => {
+  const f = await fixture(t, 'baohgk24411e@st.uel.edu.vn', { deleteFailure: true });
+  const { token } = await f.callback(await f.start());
+  assert.equal((await f.request('/api/delegates/K123', { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })).status, 500);
+  assert.equal(f.delegates.size, 1);
 });
