@@ -209,8 +209,8 @@ export class StatsComponent {
     if (!input.files || input.files.length === 0) return;
     const file = input.files[0];
     const reader = new FileReader();
-    reader.onload = () => {
-      const res = this.db.importJson(reader.result as string);
+    reader.onload = async () => {
+      const res = await this.db.importJson(reader.result as string);
       if (res.success) {
         this.feedback.playSuccessSound();
         alert(`Nhập thành công ${res.count} đại biểu vào cơ sở dữ liệu!`);

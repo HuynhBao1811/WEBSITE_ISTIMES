@@ -37,6 +37,22 @@
 
 ## 🚀 Hướng Dẫn Cài Đặt & Chạy Cục Bộ
 
+### Đăng nhập Google
+
+1. Cài thư viện backend bằng `npm install --prefix backend` nếu chưa cài.
+2. Tạo `backend/.env` theo `backend/.env.example`, điền kết nối MongoDB, Google OAuth Client ID và Client Secret (loại **Web application**).
+3. Trong [Google Cloud → Google Auth Platform → Clients](https://console.cloud.google.com/auth/clients), chọn client tương ứng và thêm **Authorized redirect URI** chính xác: `http://localhost:5001/api/auth/google/callback`.
+4. Chạy `npm run server` và `npm run start:local` ở hai cửa sổ, mở `http://localhost:4200`.
+5. Bấm **Đăng Nhập → Đăng nhập với Google**. Google luôn yêu cầu chọn tài khoản. Sau khi xác thực, hai email `ducnh234112e@st.uel.edu.vn` và `baohgk24411e@st.uel.edu.vn` là admin; tất cả email khác là user, kể cả tài khoản cũ từng được lưu role admin.
+
+Luồng dùng authorization code, PKCE, state/cookie và nonce; backend kiểm tra chữ ký ID token, audience và email đã xác minh trước khi cập nhật collection `user`. Phiên đăng nhập tồn tại 7 ngày, chỉ lưu mã băm trong collection `auth_sessions`, bị thu hồi khi đăng xuất. Dữ liệu hồ sơ/role cũ trong LocalStorage không được dùng để xác thực. Không còn đăng nhập chỉ bằng email hoặc cửa sổ chọn tài khoản mô phỏng.
+
+Chạy kiểm tra xác thực: `npm test --prefix backend`. Thao tác xóa, nhập hàng loạt, điểm danh, đặt lại điểm danh và xem danh sách người dùng cần admin; gửi/cập nhật phiếu khảo sát cần đăng nhập.
+
+Khi triển khai thật, dùng HTTPS, đổi `GOOGLE_REDIRECT_URI` sang callback của backend thật và `FRONTEND_ORIGINS` sang origin website (phân cách bằng dấu phẩy). Cấu hình reverse proxy `/api/*` và `/health` đến backend trước quy tắc SPA; cấu hình Vercel hiện tại chỉ phục vụ Angular, không tự chạy Express. Đồng thời thêm callback HTTPS chính xác vào Google Cloud. Mỗi backend instance hiện giữ yêu cầu OAuth đang chờ trong bộ nhớ; nếu chạy nhiều instance, cần sticky routing hoặc kho state dùng chung. Không đưa `.env` hay secret vào commit; nếu `.env` đã được Git theo dõi từ trước, cần bỏ theo dõi khi chuẩn bị commit.
+
+Nếu Google báo `redirect_uri_mismatch`, kiểm tra callback ở bước 3. Nếu OAuth đang ở chế độ Testing, thêm các tài khoản thử nghiệm trong mục Audience, hoặc chuyển sang Production khi đã sẵn sàng. Hướng dẫn luồng OAuth: [Google OAuth web server](https://developers.google.com/identity/protocols/oauth2/web-server).
+
 ### Yêu cầu môi trường
 * **Node.js**: >= 20.x
 * **NPM**: >= 10.x

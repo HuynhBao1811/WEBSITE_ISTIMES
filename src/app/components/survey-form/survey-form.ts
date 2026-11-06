@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DelegateService } from '../../services/delegate.service';
 import { QrService } from '../../services/qr.service';
 import { FeedbackService } from '../../services/feedback.service';
+import { AuthService } from '../../services/auth.service';
 import {
   Delegate,
   calculateAgeOnCongress,
@@ -22,6 +23,7 @@ import {
   styleUrl: './survey-form.css'
 })
 export class SurveyFormComponent {
+  private readonly auth = inject(AuthService);
   protected readonly delegateService = inject(DelegateService);
   protected readonly qrService = inject(QrService);
   protected readonly feedback = inject(FeedbackService);
@@ -65,6 +67,10 @@ export class SurveyFormComponent {
   }
 
   async onSubmitSurvey(): Promise<void> {
+    if (!this.auth.isLoggedIn()) {
+      alert('Vui lòng đăng nhập bằng Google trước khi gửi phiếu khảo sát.');
+      return;
+    }
     if (!this.mssv.trim() || !this.fullName.trim()) {
       alert('Vui lòng nhập đầy đủ MSSV và Họ tên đại biểu!');
       return;

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "server": "node backend/server.js",
     "start": "ng serve --host 0.0.0.0 --disable-host-check",
     "start:local": "ng serve",
     "start:ssl": "ng serve --host 0.0.0.0 --ssl",

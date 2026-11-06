@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DelegateService } from './services/delegate.service';
 import { FeedbackService } from './services/feedback.service';
-import { AuthService } from './services/auth.service';
+import { AuthService, UserAccount } from './services/auth.service';
 import { DelegateLookupComponent } from './components/delegate-lookup/delegate-lookup';
 import { SurveyFormComponent } from './components/survey-form/survey-form';
 import { BadgeGeneratorComponent } from './components/badge-generator/badge-generator';
@@ -66,6 +66,20 @@ export class App {
     this.showAuthModal.set(false);
   }
 
+  onLoginSuccess(user: UserAccount): void {
+    // Xử lý chuyển màn hình:
+    // Nếu là 1 trong 2 Admin -> Chuyển vào Màn hình Dashboard Quản trị ('stats')
+    // Nếu là user bình thường -> Chuyển về Màn hình Tra cứu bình thường ('lookup')
+    if (user.role === 'admin') {
+      this.activeTab.set('stats');
+      this.feedback.playSuccessSound();
+    } else {
+      if (['stats', 'scanner', 'kiosk'].includes(this.activeTab())) {
+        this.activeTab.set('lookup');
+      }
+    }
+  }
+
   logout(): void {
     this.auth.logout();
     if (['stats', 'scanner', 'kiosk'].includes(this.activeTab())) {
@@ -92,8 +106,7 @@ export class App {
       title: this.editTitle,
       subTitle: this.editSubTitle,
       unitName: this.editUnitName,
-      term: this.editTerm,
-      location: this.editLocation
+      term: this.editLocation
     });
     this.feedback.playSuccessSound();
     this.closeConfig();

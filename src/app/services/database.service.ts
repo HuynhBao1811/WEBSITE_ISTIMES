@@ -1,8 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { authHeaders } from './auth.service';
 import { Delegate } from '../models/delegate.model';
-import { INITIAL_100_DELEGATES } from './initial-delegates';
-
-const DB_STORAGE_KEY = 'DOAN_KHOA_HTTT_DATABASE_V1';
+import { getApiBase, detectActiveBackend } from './api-config';
 
 export interface DatabaseStats {
   totalRecords: number;
@@ -14,8 +13,11 @@ export interface DatabaseStats {
   providedIn: 'root'
 })
 export class DatabaseService {
-  private readonly delegatesState = signal<Delegate[]>(this.loadFromStorage());
+  // Bắt đầu với mảng rỗng - CHỈ DÙNG DỮ LIỆU THẬT TỪ MONGODB, KHÔNG DÙNG DỮ LIỆU GIẢ
+  private readonly delegatesState = signal<Delegate[]>([]);
   private readonly lastUpdatedState = signal<string>(new Date().toISOString());
+  readonly isLoading = signal<boolean>(true);
+  readonly errorMessage = signal<string | null>(null);
 
   readonly delegates = this.delegatesState.asReadonly();
   readonly lastUpdated = this.lastUpdatedState.asReadonly();
@@ -30,27 +32,38 @@ export class DatabaseService {
     };
   });
 
-  private loadFromStorage(): Delegate[] {
-    try {
-      const data = localStorage.getItem(DB_STORAGE_KEY);
-      if (data) {
-        const parsed = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (err) {
-      console.warn('Lỗi đọc database từ localStorage:', err);
-    }
-    return INITIAL_100_DELEGATES;
+  constructor() {
+    this.initDatabase();
   }
 
-  private persist(list: Delegate[]): void {
+  private async initDatabase(): Promise<void> {
+    await detectActiveBackend();
+    await this.fetchFromMongoDB();
+  }
+
+  /**
+   * Tải danh sách đại biểu thật từ MongoDB qua Backend API
+   */
+  async fetchFromMongoDB(): Promise<void> {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
     try {
-      localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(list));
-      this.lastUpdatedState.set(new Date().toISOString());
-    } catch (err) {
-      console.error('Lỗi ghi database vào localStorage:', err);
+      const api = getApiBase();
+      const res = await fetch(`${api}/delegates`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          this.delegatesState.set(data);
+          this.lastUpdatedState.set(new Date().toISOString());
+        }
+      } else {
+        console.warn('MongoDB delegates API trả về mã lỗi:', res.status);
+      }
+    } catch (err: unknown) {
+      console.warn('Không thể kết nối đến Backend MongoDB:', err);
+      this.errorMessage.set('Chưa kết nối được với MongoDB Backend server.');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
@@ -59,6 +72,7 @@ export class DatabaseService {
   }
 
   getByMssv(mssv: string): Delegate | undefined {
+    if (!mssv) return undefined;
     const clean = mssv.trim().toUpperCase();
     return this.delegates().find(d =>
       d.mssv.toUpperCase() === clean ||
@@ -66,24 +80,12 @@ export class DatabaseService {
     );
   }
 
+  /**
+   * Thêm mới đại biểu vào MongoDB
+   */
   insert(delegateData: Omit<Delegate, 'id' | 'checkedIn'>): Delegate {
     const list = this.delegates();
     const cleanMssv = delegateData.mssv.trim().toUpperCase();
-
-    // Check if exists, update instead of duplicating
-    const existingIndex = list.findIndex(d => d.mssv.toUpperCase() === cleanMssv);
-    if (existingIndex >= 0) {
-      const updated: Delegate = {
-        ...list[existingIndex],
-        ...delegateData,
-        mssv: cleanMssv
-      };
-      const next = [...list];
-      next[existingIndex] = updated;
-      this.delegatesState.set(next);
-      this.persist(next);
-      return updated;
-    }
 
     const nextIdNum = list.length + 1;
     const newId = `ĐB-${String(nextIdNum).padStart(3, '0')}`;
@@ -96,10 +98,21 @@ export class DatabaseService {
 
     const next = [...list, newRecord];
     this.delegatesState.set(next);
-    this.persist(next);
+    this.lastUpdatedState.set(new Date().toISOString());
+
+    const api = getApiBase();
+    fetch(`${api}/delegates`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(newRecord)
+    }).catch(err => console.error('Lỗi lưu đại biểu vào MongoDB:', err));
+
     return newRecord;
   }
 
+  /**
+   * Cập nhật thông tin đại biểu lên MongoDB
+   */
   update(updated: Delegate): void {
     const list = this.delegates();
     const next = list.map(d =>
@@ -108,9 +121,19 @@ export class DatabaseService {
         : d
     );
     this.delegatesState.set(next);
-    this.persist(next);
+    this.lastUpdatedState.set(new Date().toISOString());
+
+    const api = getApiBase();
+    fetch(`${api}/delegates/${encodeURIComponent(updated.mssv)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify(updated)
+    }).catch(err => console.error('Lỗi cập nhật đại biểu vào MongoDB:', err));
   }
 
+  /**
+   * Xóa đại biểu khỏi MongoDB
+   */
   delete(mssvOrId: string): boolean {
     const clean = mssvOrId.trim().toUpperCase();
     const list = this.delegates();
@@ -119,12 +142,21 @@ export class DatabaseService {
     );
     if (filtered.length !== list.length) {
       this.delegatesState.set(filtered);
-      this.persist(filtered);
+      this.lastUpdatedState.set(new Date().toISOString());
+
+      const api = getApiBase();
+      fetch(`${api}/delegates/${encodeURIComponent(clean)}`, {
+        method: 'DELETE', headers: authHeaders()
+      }).catch(err => console.error('Lỗi xóa đại biểu trên MongoDB:', err));
+
       return true;
     }
     return false;
   }
 
+  /**
+   * Điểm danh đại biểu trên MongoDB
+   */
   toggleCheckIn(mssv: string): Delegate | undefined {
     const clean = mssv.trim().toUpperCase();
     let updatedTarget: Delegate | undefined;
@@ -145,11 +177,21 @@ export class DatabaseService {
 
     if (updatedTarget) {
       this.delegatesState.set(next);
-      this.persist(next);
+      this.lastUpdatedState.set(new Date().toISOString());
+
+      const api = getApiBase();
+      fetch(`${api}/delegates/toggle-checkin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ mssv: clean })
+      }).catch(err => console.error('Lỗi cập nhật điểm danh vào MongoDB:', err));
     }
     return updatedTarget;
   }
 
+  /**
+   * Đặt lại trạng thái điểm danh cho tất cả đại biểu trên MongoDB
+   */
   resetAllAttendance(): void {
     const next = this.delegates().map(d => ({
       ...d,
@@ -157,28 +199,45 @@ export class DatabaseService {
       checkInTime: undefined
     }));
     this.delegatesState.set(next);
-    this.persist(next);
+    this.lastUpdatedState.set(new Date().toISOString());
+
+    const api = getApiBase();
+    fetch(`${api}/delegates/reset-attendance`, {
+      method: 'POST', headers: authHeaders()
+    }).catch(err => console.error('Lỗi reset điểm danh trên MongoDB:', err));
   }
 
   resetToDefaultDatabase(): void {
-    localStorage.removeItem(DB_STORAGE_KEY);
-    this.delegatesState.set(INITIAL_100_DELEGATES);
-    this.persist(INITIAL_100_DELEGATES);
+    this.fetchFromMongoDB();
   }
 
   exportJson(): string {
     return JSON.stringify(this.delegates(), null, 2);
   }
 
-  importJson(jsonString: string): { success: boolean; count?: number; error?: string } {
+  /**
+   * Nhập dữ liệu danh sách đại biểu vào MongoDB
+   */
+  async importJson(jsonString: string): Promise<{ success: boolean; count?: number; error?: string }> {
     try {
       const parsed = JSON.parse(jsonString);
       if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].mssv) {
         this.delegatesState.set(parsed);
-        this.persist(parsed);
+        this.lastUpdatedState.set(new Date().toISOString());
+
+        const api = getApiBase();
+        const res = await fetch(`${api}/delegates/import`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
+          body: JSON.stringify({ delegates: parsed })
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          return { success: true, count: resData.count || parsed.length };
+        }
         return { success: true, count: parsed.length };
       }
-      return { success: false, error: 'Định dạng dữ liệu không hợp lệ. Phải là mảng danh sách đại biểu.' };
+      return { success: false, error: 'Định dạng dữ liệu không hợp lệ. Phải là mảng danh sách đại biểu có trường MSSV.' };
     } catch (err: unknown) {
       return { success: false, error: (err as Error).message || 'Lỗi đọc tệp JSON.' };
     }
