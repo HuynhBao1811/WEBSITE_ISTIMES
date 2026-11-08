@@ -8,33 +8,34 @@
   overflow-x: hidden;
   overflow-y: auto;
   display: flex;
-  background-color: #0d3b66;
+  background-color: #0b325b;
   background-image: 
-    linear-gradient(to right, rgba(13, 59, 102, 0.05) 0%, rgba(20, 78, 140, 0.25) 40%, rgba(20, 78, 140, 0.88) 65%, #144e8c 82%, #144e8c 100%),
+    linear-gradient(to right, transparent 0%, transparent 46%, rgba(20, 78, 140, 0.42) 58%, rgba(20, 78, 140, 0.92) 72%, #144e8c 84%, #144e8c 100%),
     url('/images/DSC_0876.jpg');
   background-size: cover;
   background-position: center left;
   background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
   font-family: 'Roboto', sans-serif;
 }
 
 /* ==========================================================================
-   Top Left Branding (UEL - Đoàn - FIS Logos & Title)
+   Top Left Branding (UEL - Đoàn - FIS Logos & Text)
+   Không dùng glassmorphism, hiển thị trực tiếp sắc nét trên ảnh nền
    ========================================================================== */
 .top-brand-header {
   position: absolute;
-  top: 28px;
-  left: 36px;
+  top: 32px;
+  left: 40px;
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 18px;
-  background: rgba(9, 35, 71, 0.45);
-  backdrop-filter: blur(8px);
-  padding: 10px 20px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  gap: 16px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  padding: 0;
 }
 
 .logo-combo-box {
@@ -45,11 +46,11 @@
 }
 
 .logo-combo-img {
-  height: 56px;
+  height: 64px;
   width: auto;
-  max-width: 220px;
+  max-width: 240px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
   image-rendering: -webkit-optimize-contrast;
 }
 
@@ -65,18 +66,18 @@
   color: #ffffff;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .faculty-name {
   font-family: 'Montserrat', sans-serif;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 900;
   color: #ffffff;
   margin: 2px 0 0 0;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
 }
 
 /* ==========================================================================
@@ -87,7 +88,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 40px 60px 40px 20px;
+  padding: 40px 64px 40px 20px;
   position: relative;
   z-index: 10;
 }
@@ -97,24 +98,24 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 440px;
-  gap: 20px;
+  max-width: 430px;
+  gap: 18px;
 }
 
-/* Auth Card */
+/* Auth Card (Chuẩn theo mẫu hình 1) */
 .auth-card {
   width: 100%;
   background: #ffffff;
-  border-radius: 24px;
-  padding: 30px 34px;
-  box-shadow: 0 16px 45px rgba(0, 20, 50, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 20px;
+  padding: 28px 32px;
+  box-shadow: 0 16px 45px rgba(0, 15, 45, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideInRight {
   from {
-    transform: translateX(30px);
+    transform: translateX(25px);
     opacity: 0;
   }
   to {
@@ -124,14 +125,14 @@
 }
 
 /* Card Header */
-.card-top-bar {
+.card-head-area {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.title-with-tabs {
+.title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -167,33 +168,38 @@
 .btn-switch-mode.active {
   background: #ffffff;
   color: #144e8c;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.sub-portal-pill {
-  display: inline-flex;
+/* Cổng Hoạt động & Điểm rèn luyện */
+.portal-badge-button {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12.5px;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #475569;
-  width: fit-content;
+  color: #334155;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.mortarboard-icon {
-  font-size: 14px;
+.mortarboard-svg {
+  width: 18px;
+  height: 18px;
+  color: #d97706;
 }
 
 /* Alert messages */
 .alert {
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: 8px;
   font-size: 13px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .alert-error {
@@ -212,13 +218,13 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .field-label {
@@ -230,15 +236,17 @@
   color: #334155;
 }
 
-.label-icon {
-  font-size: 14px;
+.field-icon-svg {
+  width: 15px;
+  height: 15px;
+  color: #64748b;
 }
 
 .input-shell {
   display: flex;
   align-items: center;
   border: 1.5px solid #cbd5e1;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #ffffff;
   transition: all 0.2s ease;
 }
@@ -253,7 +261,7 @@
   border: none;
   background: transparent;
   outline: none;
-  padding: 12px 14px;
+  padding: 11px 14px;
   font-size: 14px;
   color: #0f172a;
 }
@@ -264,7 +272,7 @@
 
 .input-shell.with-toggle {
   position: relative;
-  padding-right: 40px;
+  padding-right: 38px;
 }
 
 .btn-toggle-eye {
@@ -279,8 +287,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  border-radius: 6px;
+  padding: 4px;
+  border-radius: 4px;
   transition: color 0.15s ease;
 }
 
@@ -289,8 +297,8 @@
 }
 
 .btn-toggle-eye svg {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
 }
 
 /* Remember me row */
@@ -331,26 +339,26 @@
   background: #144e8c;
   color: #ffffff;
   border: none;
-  border-radius: 10px;
-  padding: 13px;
+  border-radius: 8px;
+  padding: 12px;
   font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(20, 78, 140, 0.35);
-  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(20, 78, 140, 0.3);
+  margin-top: 2px;
 }
 
 .btn-submit-main:hover {
   background: #0f3d70;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(20, 78, 140, 0.45);
+  box-shadow: 0 6px 16px rgba(20, 78, 140, 0.4);
 }
 
-.btn-icon {
-  font-weight: 800;
-  letter-spacing: -1px;
+.btn-arrow-svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* Divider */
@@ -358,7 +366,7 @@
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 18px 0 14px 0;
+  margin: 16px 0 12px 0;
   color: #94a3b8;
   font-size: 12px;
 }
@@ -371,30 +379,26 @@
 }
 
 .social-divider span {
-  padding: 0 12px;
+  padding: 0 10px;
 }
 
 /* Google Sign-in Button */
-.google-auth-shell {
-  width: 100%;
-}
-
 .btn-google-sign {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 11px 16px;
+  border-radius: 8px;
+  padding: 10px 14px;
   font-size: 14px;
   font-weight: 600;
   color: #334155;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-google-sign:hover {
@@ -404,13 +408,13 @@
 }
 
 .google-svg-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 /* Quick Admin Accordion */
 .quick-admin-toggle-bar {
-  margin-top: 14px;
+  margin-top: 12px;
   width: 100%;
 }
 
@@ -418,9 +422,9 @@
   width: 100%;
   background: #f1f5f9;
   border: 1px dashed #cbd5e1;
-  border-radius: 8px;
-  padding: 7px 12px;
-  font-size: 12px;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11.5px;
   font-weight: 600;
   color: #144e8c;
   cursor: pointer;
@@ -434,11 +438,11 @@
 .admin-quick-chips {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 5px;
+  margin-top: 6px;
   background: #f8fafc;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 6px;
+  border-radius: 6px;
   border: 1px solid #e2e8f0;
 }
 
@@ -448,10 +452,10 @@
   gap: 8px;
   background: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 5px;
+  padding: 5px 8px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11.5px;
   text-align: left;
   transition: all 0.15s ease;
 }
@@ -467,8 +471,8 @@
   color: #854d0e;
   font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 1px 5px;
+  border-radius: 3px;
   text-transform: uppercase;
 }
 
@@ -487,7 +491,7 @@
   background: none;
   border: none;
   color: #64748b;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: underline;
@@ -499,7 +503,8 @@
 }
 
 /* ==========================================================================
-   Landing Footer (Social Links & Contact Info)
+   Landing Footer (Social Icons & Contact Info)
+   KHÔNG dùng glassmorphism, hiển thị icon & chữ sắc nét
    ========================================================================== */
 .landing-footer {
   width: 100%;
@@ -514,11 +519,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 22px;
   flex-wrap: wrap;
 }
 
-.social-link {
+.social-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -526,52 +531,48 @@
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
-  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  padding: 3px 0;
+  transition: all 0.15s ease;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-.social-link:hover {
-  background: rgba(255, 255, 255, 0.28);
+.social-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #38bdf8;
 }
 
-.social-link.fb:hover {
-  background: #1877f2;
-  border-color: #1877f2;
+.social-item.fb:hover {
+  color: #60a5fa;
 }
 
-.social-link.insta:hover {
-  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-  border-color: #dc2743;
+.social-item.insta:hover {
+  color: #f472b6;
 }
 
-.social-link.tiktok:hover {
-  background: #000000;
-  border-color: #000000;
+.social-item.tiktok:hover {
+  color: #a7f3d0;
 }
 
-.social-link.email:hover {
-  background: #ea4335;
-  border-color: #ea4335;
+.social-item.email:hover {
+  color: #f87171;
 }
 
-.social-icon {
-  font-size: 14px;
+.social-icon-svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
 }
 
 .contact-address-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 11.5px;
-  line-height: 1.4;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 11px;
+  line-height: 1.45;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .address-line, .copyright-line {
@@ -584,7 +585,7 @@
 @media (max-width: 992px) {
   .landing-container {
     background-image: 
-      linear-gradient(to bottom, rgba(20, 78, 140, 0.3) 0%, rgba(20, 78, 140, 0.92) 40%, #144e8c 100%),
+      linear-gradient(to bottom, rgba(20, 78, 140, 0.25) 0%, rgba(20, 78, 140, 0.94) 42%, #144e8c 100%),
       url('/images/DSC_0876.jpg');
     flex-direction: column;
     justify-content: flex-start;
@@ -594,14 +595,14 @@
     position: relative;
     top: 0;
     left: 0;
-    margin: 20px auto 0 auto;
+    margin: 24px auto 0 auto;
     width: fit-content;
     max-width: 90vw;
   }
 
   .auth-section {
     justify-content: center;
-    padding: 30px 20px 40px 20px;
+    padding: 24px 20px 36px 20px;
   }
 }
 
@@ -609,11 +610,11 @@
   .top-brand-header {
     flex-direction: column;
     text-align: center;
-    padding: 10px 14px;
+    gap: 10px;
   }
 
   .logo-combo-img {
-    height: 44px;
+    height: 50px;
   }
 
   .school-name {
@@ -625,15 +626,14 @@
   }
 
   .auth-card {
-    padding: 24px 20px;
+    padding: 22px 18px;
   }
 
   .social-links-bar {
-    gap: 8px;
+    gap: 14px;
   }
 
-  .social-link {
+  .social-item {
     font-size: 12px;
-    padding: 4px 10px;
   }
 }
