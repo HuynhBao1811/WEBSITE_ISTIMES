@@ -14,7 +14,7 @@ export interface DatabaseStats {
   providedIn: 'root'
 })
 export class DatabaseService {
-  private readonly delegatesState = signal<Delegate[]>(INITIAL_100_DELEGATES);
+  private readonly delegatesState = signal<Delegate[]>([]);
   private readonly lastUpdatedState = signal<string>(new Date().toISOString());
   readonly isLoading = signal<boolean>(true);
   readonly errorMessage = signal<string | null>(null);
@@ -52,11 +52,9 @@ export class DatabaseService {
       const res = await fetch(`${api}/delegates`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           this.delegatesState.set(data);
           this.lastUpdatedState.set(new Date().toISOString());
-        } else if (Array.isArray(data) && data.length === 0) {
-          this.delegatesState.set(INITIAL_100_DELEGATES);
         }
       } else {
         console.warn('MongoDB delegates API trả về mã lỗi:', res.status);

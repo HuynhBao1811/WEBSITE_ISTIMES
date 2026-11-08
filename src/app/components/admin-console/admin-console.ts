@@ -70,15 +70,14 @@ export class AdminConsoleComponent {
   readonly selectedDelegate = signal<Delegate | null>(null);
   readonly selectedQrDataUrl = signal<string | null>(null);
 
-  // Computed statistics matching user's mockup cards
-  readonly totalRecords = computed(() => {
-    const realTotal = this.delegateService.totalDelegates();
-    return realTotal > 0 ? realTotal : 128;
-  });
+  // Computed statistics from real database
+  readonly totalRecords = computed(() => this.delegateService.totalDelegates());
 
-  readonly qualifiedCount = computed(() => {
-    const checked = this.delegateService.checkedInCount();
-    return checked > 0 ? checked : 86;
+  readonly qualifiedCount = computed(() => this.delegateService.checkedInCount());
+
+  readonly needUpdateCount = computed(() => {
+    const list = this.delegateService.delegates();
+    return list.filter(d => !d.dob || !d.unit || !d.achievements).length;
   });
 
   readonly pendingCount = computed(() => {
@@ -86,15 +85,7 @@ export class AdminConsoleComponent {
     const qualified = this.qualifiedCount();
     const needUpdate = this.needUpdateCount();
     const p = total - qualified - needUpdate;
-    return p >= 0 ? p : 29;
-  });
-
-  readonly needUpdateCount = computed(() => {
-    // Delegates with incomplete survey or criteria
-    const list = this.delegateService.delegates();
-    if (list.length === 0) return 13;
-    const missing = list.filter(d => !d.dob || !d.unit || !d.achievements).length;
-    return missing > 0 ? missing : 13;
+    return Math.max(0, p);
   });
 
   // Overview Delegate List for Table

@@ -48,18 +48,6 @@
 
       <!-- Quick Action Buttons & User Menu -->
       <div class="header-right">
-        <!-- Live Attendance Pill (for admin or live view) -->
-        @if (auth.isAdmin()) {
-          <div class="live-counter-pill" (click)="setTab('stats')" title="Bấm để xem danh sách chi tiết">
-            <span class="live-pulse"></span>
-            <span class="counter-label">Điểm Danh:</span>
-            <strong class="counter-val">
-              {{ delegateService.checkedInCount() }} / {{ delegateService.totalDelegates() }}
-            </strong>
-            <span class="counter-percent">({{ delegateService.attendancePercentage() }}%)</span>
-          </div>
-        }
-
         <!-- Sound Toggle -->
         <button
           type="button"
@@ -81,21 +69,6 @@
             </svg>
           }
         </button>
-
-        <!-- Edit Config Button (Admin only) -->
-        @if (auth.isAdmin()) {
-          <button
-            type="button"
-            class="head-btn"
-            (click)="openConfig()"
-            title="Tùy chỉnh thông tin Đại hội"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-          </button>
-        }
 
         <!-- Auth Status & Controls -->
         @if (auth.isLoggedIn(); as isLogged) {
@@ -121,10 +94,10 @@
       </div>
     </div>
 
-    <!-- Main Navigation Bar -->
+    <!-- Main Navigation Bar (Chỉ dành cho Cổng sinh viên: Tra cứu, Khảo sát, Mã QR) -->
     <nav class="app-nav">
       <div class="nav-inner container">
-        <!-- Tab: Tra Cứu Đại Biểu (Mặc định cho mọi người) -->
+        <!-- Tab: Tra Cứu Đại Biểu (Mặc định cho sinh viên) -->
         <button
           type="button"
           class="nav-tab"
@@ -138,7 +111,7 @@
           <span>Tra cứu đại biểu</span>
         </button>
 
-        <!-- Tab: Khảo Sát Thông Tin (Cho mọi người) -->
+        <!-- Tab: Khảo Sát Thông Tin -->
         <button
           type="button"
           class="nav-tab"
@@ -152,7 +125,7 @@
           <span>Phiếu Khảo Sát ĐB</span>
         </button>
 
-        <!-- Tab: Mã QR & In Thẻ Đeo (Cho mọi người) -->
+        <!-- Tab: Mã QR & In Thẻ Đeo -->
         <button
           type="button"
           class="nav-tab"
@@ -165,58 +138,6 @@
           </svg>
           <span>Mã QR & In Thẻ Đeo</span>
         </button>
-
-        <!-- Admin Only Tabs -->
-        @if (auth.isAdmin()) {
-          <div class="admin-tab-separator"></div>
-
-          <!-- Tab: Admin Dashboard (Số liệu đoàn viên) -->
-          <button
-            type="button"
-            class="nav-tab admin-tab"
-            [class.active]="activeTab() === 'stats'"
-            (click)="setTab('stats')"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="20" x2="18" y2="10"></line>
-              <line x1="12" y1="20" x2="12" y2="4"></line>
-              <line x1="6" y1="20" x2="6" y2="14"></line>
-            </svg>
-            <span>Dashboard Quản Trị</span>
-            <span class="tab-badge">{{ delegateService.totalDelegates() }}</span>
-          </button>
-
-          <!-- Tab: QR Scanner (Camera điểm danh) -->
-          <button
-            type="button"
-            class="nav-tab admin-tab"
-            [class.active]="activeTab() === 'scanner'"
-            (click)="setTab('scanner')"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            <span>Điểm Danh QR Camera</span>
-          </button>
-
-          <!-- Tab: Kiosk Screen -->
-          <button
-            type="button"
-            class="nav-tab admin-tab"
-            [class.active]="activeTab() === 'kiosk'"
-            (click)="setTab('kiosk')"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            <span>Màn Hình Kiosk Lễ Tân</span>
-          </button>
-        }
       </div>
     </nav>
   </header>
@@ -233,14 +154,8 @@
       @case ('badges') {
         <app-badge-generator></app-badge-generator>
       }
-      @case ('stats') {
-        <app-stats></app-stats>
-      }
-      @case ('scanner') {
-        <app-scanner></app-scanner>
-      }
-      @case ('kiosk') {
-        <app-kiosk-screen></app-kiosk-screen>
+      @default {
+        <app-delegate-lookup></app-delegate-lookup>
       }
     }
   </main>

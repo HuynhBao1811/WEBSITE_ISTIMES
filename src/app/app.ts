@@ -7,14 +7,11 @@ import { AuthService, UserAccount } from './services/auth.service';
 import { DelegateLookupComponent } from './components/delegate-lookup/delegate-lookup';
 import { SurveyFormComponent } from './components/survey-form/survey-form';
 import { BadgeGeneratorComponent } from './components/badge-generator/badge-generator';
-import { StatsComponent } from './components/stats/stats';
-import { ScannerComponent } from './components/scanner/scanner';
-import { KioskScreenComponent } from './components/kiosk-screen/kiosk-screen';
 import { AuthModalComponent } from './components/auth-modal/auth-modal';
 import { LandingLoginComponent } from './components/landing-login/landing-login';
 import { AdminConsoleComponent } from './components/admin-console/admin-console';
 
-export type ActiveTab = 'lookup' | 'survey' | 'badges' | 'stats' | 'scanner' | 'kiosk';
+export type ActiveTab = 'lookup' | 'survey' | 'badges';
 
 @Component({
   selector: 'app-root',
@@ -27,9 +24,6 @@ export type ActiveTab = 'lookup' | 'survey' | 'badges' | 'stats' | 'scanner' | '
     DelegateLookupComponent,
     SurveyFormComponent,
     BadgeGeneratorComponent,
-    StatsComponent,
-    ScannerComponent,
-    KioskScreenComponent,
     AuthModalComponent
   ],
   templateUrl: './app.html',
@@ -53,12 +47,6 @@ export class App {
   editLocation = '';
 
   setTab(tab: ActiveTab): void {
-    // Check permission for admin-only tabs
-    const adminOnlyTabs: ActiveTab[] = ['stats', 'scanner', 'kiosk'];
-    if (adminOnlyTabs.includes(tab) && !this.auth.isAdmin()) {
-      this.showAuthModal.set(true);
-      return;
-    }
     this.activeTab.set(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -77,18 +65,14 @@ export class App {
       this.feedback.playSuccessSound();
     } else {
       this.viewMode.set('portal');
-      if (['stats', 'scanner', 'kiosk'].includes(this.activeTab())) {
-        this.activeTab.set('lookup');
-      }
+      this.activeTab.set('lookup');
     }
   }
 
   logout(): void {
     this.auth.logout();
     this.viewMode.set('admin');
-    if (['stats', 'scanner', 'kiosk'].includes(this.activeTab())) {
-      this.activeTab.set('lookup');
-    }
+    this.activeTab.set('lookup');
   }
 
   switchToAdmin(): void {
@@ -98,6 +82,9 @@ export class App {
 
   switchToPortal(): void {
     this.viewMode.set('portal');
+    if (!['lookup', 'survey', 'badges'].includes(this.activeTab())) {
+      this.activeTab.set('lookup');
+    }
     this.feedback.playBeepSound();
   }
 
