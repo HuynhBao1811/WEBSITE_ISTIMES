@@ -1,10 +1,22 @@
 :root {
-  --youth-blue: #005baa;
-  --youth-blue-hover: #004b91;
-  --youth-blue-light: #e8f2fc;
-  --youth-blue-gradient: linear-gradient(135deg, #005baa 0%, #003e7e 100%);
-  --youth-dark-blue: #003366;
+  /* Bộ nhận diện thương hiệu Đoàn Khoa Hệ Thống Thông Tin - IS Times */
+  --primary-blue: #144e8c;
+  --primary-blue-hover: #0f3d6e;
+  --primary-blue-light: #e8f1fb;
+  --primary-blue-gradient: linear-gradient(135deg, #144e8c 0%, #0d325b 100%);
+
+  --brand-orange: #f05a22;
+  --brand-orange-hover: #d64713;
+  --brand-orange-light: #fef0eb;
+  --brand-orange-gradient: linear-gradient(135deg, #f05a22 0%, #e04a14 100%);
+
+  --youth-blue: #144e8c;
+  --youth-blue-hover: #0f3d6e;
+  --youth-blue-light: #e8f1fb;
+  --youth-blue-gradient: linear-gradient(135deg, #144e8c 0%, #0d325b 100%);
+  --youth-dark-blue: #0d325b;
   --youth-deep-navy: #092347;
+
   --youth-gold: #ffbe0b;
   --youth-gold-hover: #e5aa00;
   --youth-red: #e11d48;
@@ -12,6 +24,7 @@
   --youth-green-dark: #059669;
   --youth-green-light: #d1fae5;
   --youth-amber: #f59e0b;
+
   --bg-slate: #f8fafc;
   --bg-page: #f4f7fb;
   --bg-card: #ffffff;
@@ -21,8 +34,8 @@
   --border-light: #e2e8f0;
   --border-blue: #bfdbfe;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 14px rgba(0, 40, 100, 0.08);
-  --shadow-lg: 0 10px 25px rgba(0, 40, 100, 0.12);
+  --shadow-md: 0 4px 14px rgba(20, 78, 140, 0.08);
+  --shadow-lg: 0 10px 25px rgba(20, 78, 140, 0.12);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;

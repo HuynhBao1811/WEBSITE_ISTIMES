@@ -2,6 +2,7 @@ import { Injectable, signal, computed } from '@angular/core';
 import { authHeaders } from './auth.service';
 import { Delegate } from '../models/delegate.model';
 import { getApiBase, detectActiveBackend } from './api-config';
+import { INITIAL_100_DELEGATES } from './initial-delegates';
 
 export interface DatabaseStats {
   totalRecords: number;
@@ -13,8 +14,7 @@ export interface DatabaseStats {
   providedIn: 'root'
 })
 export class DatabaseService {
-  // Bắt đầu với mảng rỗng - CHỈ DÙNG DỮ LIỆU THẬT TỪ MONGODB, KHÔNG DÙNG DỮ LIỆU GIẢ
-  private readonly delegatesState = signal<Delegate[]>([]);
+  private readonly delegatesState = signal<Delegate[]>(INITIAL_100_DELEGATES);
   private readonly lastUpdatedState = signal<string>(new Date().toISOString());
   readonly isLoading = signal<boolean>(true);
   readonly errorMessage = signal<string | null>(null);
@@ -52,9 +52,11 @@ export class DatabaseService {
       const res = await fetch(`${api}/delegates`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           this.delegatesState.set(data);
           this.lastUpdatedState.set(new Date().toISOString());
+        } else if (Array.isArray(data) && data.length === 0) {
+          this.delegatesState.set(INITIAL_100_DELEGATES);
         }
       } else {
         console.warn('MongoDB delegates API trả về mã lỗi:', res.status);
