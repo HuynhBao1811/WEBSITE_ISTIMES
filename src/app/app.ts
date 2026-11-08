@@ -12,6 +12,7 @@ import { ScannerComponent } from './components/scanner/scanner';
 import { KioskScreenComponent } from './components/kiosk-screen/kiosk-screen';
 import { AuthModalComponent } from './components/auth-modal/auth-modal';
 import { LandingLoginComponent } from './components/landing-login/landing-login';
+import { AdminConsoleComponent } from './components/admin-console/admin-console';
 
 export type ActiveTab = 'lookup' | 'survey' | 'badges' | 'stats' | 'scanner' | 'kiosk';
 
@@ -22,6 +23,7 @@ export type ActiveTab = 'lookup' | 'survey' | 'badges' | 'stats' | 'scanner' | '
     CommonModule,
     FormsModule,
     LandingLoginComponent,
+    AdminConsoleComponent,
     DelegateLookupComponent,
     SurveyFormComponent,
     BadgeGeneratorComponent,
@@ -39,6 +41,7 @@ export class App {
   protected readonly auth = inject(AuthService);
 
   readonly activeTab = signal<ActiveTab>('lookup');
+  readonly viewMode = signal<'admin' | 'portal'>('admin');
   readonly showConfigModal = signal(false);
   readonly showAuthModal = signal(false);
 
@@ -69,13 +72,11 @@ export class App {
   }
 
   onLoginSuccess(user: UserAccount): void {
-    // Xử lý chuyển màn hình:
-    // Nếu là 1 trong 2 Admin -> Chuyển vào Màn hình Dashboard Quản trị ('stats')
-    // Nếu là user bình thường -> Chuyển về Màn hình Tra cứu bình thường ('lookup')
     if (user.role === 'admin') {
-      this.activeTab.set('stats');
+      this.viewMode.set('admin');
       this.feedback.playSuccessSound();
     } else {
+      this.viewMode.set('portal');
       if (['stats', 'scanner', 'kiosk'].includes(this.activeTab())) {
         this.activeTab.set('lookup');
       }
@@ -84,9 +85,20 @@ export class App {
 
   logout(): void {
     this.auth.logout();
+    this.viewMode.set('admin');
     if (['stats', 'scanner', 'kiosk'].includes(this.activeTab())) {
       this.activeTab.set('lookup');
     }
+  }
+
+  switchToAdmin(): void {
+    this.viewMode.set('admin');
+    this.feedback.playBeepSound();
+  }
+
+  switchToPortal(): void {
+    this.viewMode.set('portal');
+    this.feedback.playBeepSound();
   }
 
   openConfig(): void {

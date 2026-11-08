@@ -1,7 +1,26 @@
 @if (!auth.isLoggedIn()) {
   <app-landing-login></app-landing-login>
+} @else if (auth.isAdmin() && viewMode() === 'admin') {
+  <!-- Giao diện Admin Staff Console với Sidebar bên trái (chuẩn theo mockup) -->
+  <app-admin-console
+    (switchToPortal)="switchToPortal()"
+    (openConfig)="openConfig()"
+    (logoutRequested)="logout()"
+  ></app-admin-console>
 } @else {
   <div class="app-shell">
+  <!-- Admin Return to Staff Console Banner (Khi Admin xem Cổng sinh viên) -->
+  @if (auth.isAdmin()) {
+    <div class="admin-return-bar no-print">
+      <div class="container return-inner">
+        <span>⭐ Bạn đang xem giao diện <strong>Cổng sinh viên</strong></span>
+        <button type="button" class="btn-return-admin" (click)="switchToAdmin()">
+          🛡️ Trở về Staff Console (Admin Workspace) ➔
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- Topmost Notification Banner (Giống ảnh mẫu của user) -->
   <aside class="top-announcement-bar no-print">
     <div class="container bar-inner">

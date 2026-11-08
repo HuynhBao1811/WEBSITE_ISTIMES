@@ -1,3 +1,36 @@
+.admin-return-bar {
+  background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  font-size: 13px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.return-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-return-admin {
+  background: #ffffff;
+  color: #0369a1;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-return-admin:hover {
+  background: #f0f9ff;
+  color: #0284c7;
+  transform: translateY(-1px);
+}
+
 .app-shell {
   min-height: 100vh;
   display: flex;

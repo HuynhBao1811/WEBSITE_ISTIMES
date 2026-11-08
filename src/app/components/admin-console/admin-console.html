@@ -1,0 +1,618 @@
+<div class="admin-layout">
+  <!-- =========================================================================
+       LEFT SIDEBAR (Thanh điều hướng bên trái chuẩn theo giao diện mockup)
+       ========================================================================= -->
+  <aside class="admin-sidebar">
+    <!-- Brand Header -->
+    <div class="sidebar-brand">
+      <div class="brand-badge-box">
+        <span class="badge-letter">IS</span>
+      </div>
+      <div class="brand-name-wrap">
+        <span class="brand-main">IS TIMES</span>
+        <span class="brand-sub">STAFF CONSOLE</span>
+      </div>
+    </div>
+
+    <!-- Workspace Navigation -->
+    <div class="sidebar-nav-section">
+      <span class="nav-section-title">WORKSPACE</span>
+
+      <nav class="sidebar-menu">
+        <!-- 1. Tổng quan -->
+        <button
+          type="button"
+          class="menu-item"
+          [class.active]="activeTab() === 'overview'"
+          (click)="setTab('overview')"
+        >
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span class="menu-label">Tổng quan</span>
+        </button>
+
+        <!-- 2. Đại biểu -->
+        <button
+          type="button"
+          class="menu-item"
+          [class.active]="activeTab() === 'delegates'"
+          (click)="setTab('delegates')"
+        >
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span class="menu-label">Đại biểu</span>
+          <span class="menu-badge">{{ delegateService.totalDelegates() }}</span>
+        </button>
+
+        <!-- 3. Tiêu chí -->
+        <button
+          type="button"
+          class="menu-item"
+          [class.active]="activeTab() === 'criteria'"
+          (click)="setTab('criteria')"
+        >
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <span class="menu-label">Tiêu chí</span>
+        </button>
+
+        <!-- 4. Điểm danh QR camera -->
+        <button
+          type="button"
+          class="menu-item"
+          [class.active]="activeTab() === 'scanner'"
+          (click)="setTab('scanner')"
+        >
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span class="menu-label">Điểm danh QR camera</span>
+        </button>
+
+        <!-- 5. Khảo sát thông tin đại biểu (Admin cũng là sinh viên) -->
+        <button
+          type="button"
+          class="menu-item"
+          [class.active]="activeTab() === 'survey'"
+          (click)="setTab('survey')"
+        >
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <span class="menu-label">Khảo sát đại biểu</span>
+        </button>
+
+        <!-- 6. In mã QR & Thẻ đeo -->
+        <button
+          type="button"
+          class="menu-item"
+          [class.active]="activeTab() === 'badges'"
+          (click)="setTab('badges')"
+        >
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          <span class="menu-label">Mã QR & Thẻ đeo</span>
+        </button>
+
+        <!-- 7. Màn hình Kiosk Lễ tân -->
+        <button
+          type="button"
+          class="menu-item"
+          [class.active]="activeTab() === 'kiosk'"
+          (click)="setTab('kiosk')"
+        >
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span class="menu-label">Màn hình Kiosk</span>
+        </button>
+      </nav>
+
+      <!-- Bottom: Switch back to Student Portal -->
+      <div class="sidebar-bottom-actions">
+        <button type="button" class="btn-to-portal" (click)="switchToPortal.emit()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Cổng sinh viên</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       MAIN CONTENT WORKSPACE (Khu vực làm việc chính bên phải)
+       ========================================================================= -->
+  <div class="admin-main-wrap">
+    <!-- Top Header Bar -->
+    <header class="admin-topbar">
+      <!-- Breadcrumb -->
+      <div class="topbar-left">
+        <span class="breadcrumb-root">IS TIMES</span>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">
+          @switch (activeTab()) {
+            @case ('overview') { QUẢN LÝ ĐẠI BIỂU }
+            @case ('delegates') { DANH SÁCH ĐẠI BIỂU }
+            @case ('criteria') { BÁO CÁO TIÊU CHÍ }
+            @case ('scanner') { ĐIỂM DANH QR CAMERA }
+            @case ('survey') { KHẢO SÁT THÔNG TIN ĐẠI BIỂU }
+            @case ('badges') { MÃ QR & THẺ ĐEO }
+            @case ('kiosk') { MÀN HÌNH KIOSK LỄ TÂN }
+          }
+        </span>
+      </div>
+
+      <!-- Top Tools -->
+      <div class="topbar-right">
+        <!-- Academic Year Dropdown -->
+        <div class="term-selector-box">
+          <select [ngModel]="selectedYear()" (ngModelChange)="selectedYear.set($event)" class="term-select">
+            <option value="NĂM HỌC 2026-2027">NĂM HỌC 2026-2027</option>
+            <option value="NĂM HỌC 2025-2026">NĂM HỌC 2025-2026</option>
+            <option value="NHIỆM KỲ 2024-2027">NHIỆM KỲ 2024-2027</option>
+          </select>
+        </div>
+
+        <!-- Export CSV Button -->
+        <button type="button" class="btn-export-csv" (click)="exportCsvData()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Xuất CSV mẫu</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button
+          type="button"
+          class="btn-tool-icon"
+          [class.active]="feedback.isSoundEnabled()"
+          (click)="feedback.toggleSound()"
+          [title]="feedback.isSoundEnabled() ? 'Tắt âm thanh' : 'Bật âm thanh'"
+        >
+          @if (feedback.isSoundEnabled()) {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          }
+        </button>
+
+        <!-- Config Button -->
+        <button
+          type="button"
+          class="btn-tool-icon"
+          (click)="openConfig.emit()"
+          title="Tùy chỉnh thông tin Đại hội"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <!-- Admin User Pill -->
+        <div class="admin-user-pill">
+          <span class="pill-admin-badge">BCH ADMIN</span>
+          <span class="pill-admin-name">
+            {{ auth.currentUser()?.fullName || auth.currentUser()?.email }}
+          </span>
+          <button type="button" class="btn-pill-logout" (click)="logoutRequested.emit()">
+            Thoát
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Workspace -->
+    <main class="admin-content-viewport">
+      <!-- =====================================================================
+           TAB 1: TỔNG QUAN (Exact mockup from user image media_1794122833863_dd62c3cf)
+           ===================================================================== -->
+      @if (activeTab() === 'overview') {
+        <div class="overview-container">
+          <!-- Overview Heading Row -->
+          <div class="overview-header-row">
+            <div>
+              <span class="overview-kicker">DASHBOARD OVERVIEW</span>
+              <h1 class="overview-title">Quản lý tư cách đại biểu</h1>
+              <p class="overview-sub">Không gian làm việc dành cho cán bộ Đoàn.</p>
+            </div>
+            <div class="overview-tag-box">
+              <span class="tag-status-live">TRỰC TIẾP HỆ THỐNG</span>
+            </div>
+          </div>
+
+          <!-- 4 Stat Metric Cards (Row 1) -->
+          <div class="metric-cards-grid">
+            <!-- Card 1: Tổng hồ sơ -->
+            <div class="metric-card card-total" (click)="setTab('delegates')">
+              <span class="card-head-label">Tổng hồ sơ</span>
+              <div class="card-big-value">{{ totalRecords() }}</div>
+              <span class="card-foot-desc">Số liệu tổng quan</span>
+            </div>
+
+            <!-- Card 2: Đủ điều kiện -->
+            <div class="metric-card card-qualified">
+              <span class="card-head-label">Đủ điều kiện</span>
+              <div class="card-big-value val-green">{{ qualifiedCount() }}</div>
+              <span class="card-foot-desc">Màu xanh - hoàn tất</span>
+            </div>
+
+            <!-- Card 3: Chờ đối chiếu -->
+            <div class="metric-card card-pending">
+              <span class="card-head-label">Chờ đối chiếu</span>
+              <div class="card-big-value val-blue">{{ pendingCount() }}</div>
+              <span class="card-foot-desc">Cần xem xét thêm</span>
+            </div>
+
+            <!-- Card 4: Cần bổ sung -->
+            <div class="metric-card card-update">
+              <span class="card-head-label">Cần bổ sung</span>
+              <div class="card-big-value val-orange">{{ needUpdateCount() }}</div>
+              <span class="card-foot-desc">Màu cam - ưu tiên</span>
+            </div>
+          </div>
+
+          <!-- Middle Row: Chart & Progress -->
+          <div class="middle-analytics-grid">
+            <!-- Left: Xu hướng xử lý hồ sơ (Bar Chart) -->
+            <div class="analytics-card chart-card">
+              <div class="analytics-head">
+                <h3 class="analytics-title">Xu hướng xử lý hồ sơ</h3>
+                <span class="analytics-sub">7 tuần gần nhất - Giả định</span>
+              </div>
+
+              <!-- Dual Bar Visual Chart -->
+              <div class="bars-chart-container">
+                <div class="bar-col">
+                  <div class="bar-pair">
+                    <div class="bar-pillar bar-blue" style="height: 38px;"></div>
+                    <div class="bar-pillar bar-orange" style="height: 18px;"></div>
+                  </div>
+                  <span class="bar-label">T1</span>
+                </div>
+
+                <div class="bar-col">
+                  <div class="bar-pair">
+                    <div class="bar-pillar bar-blue" style="height: 52px;"></div>
+                    <div class="bar-pillar bar-orange" style="height: 24px;"></div>
+                  </div>
+                  <span class="bar-label">T2</span>
+                </div>
+
+                <div class="bar-col">
+                  <div class="bar-pair">
+                    <div class="bar-pillar bar-blue" style="height: 68px;"></div>
+                    <div class="bar-pillar bar-orange" style="height: 22px;"></div>
+                  </div>
+                  <span class="bar-label">T3</span>
+                </div>
+
+                <div class="bar-col">
+                  <div class="bar-pair">
+                    <div class="bar-pillar bar-blue" style="height: 84px;"></div>
+                    <div class="bar-pillar bar-orange" style="height: 32px;"></div>
+                  </div>
+                  <span class="bar-label">T4</span>
+                </div>
+
+                <div class="bar-col">
+                  <div class="bar-pair">
+                    <div class="bar-pillar bar-blue" style="height: 74px;"></div>
+                    <div class="bar-pillar bar-orange" style="height: 30px;"></div>
+                  </div>
+                  <span class="bar-label">T5</span>
+                </div>
+
+                <div class="bar-col">
+                  <div class="bar-pair">
+                    <div class="bar-pillar bar-blue" style="height: 110px;"></div>
+                    <div class="bar-pillar bar-orange" style="height: 48px;"></div>
+                  </div>
+                  <span class="bar-label">T6</span>
+                </div>
+
+                <div class="bar-col">
+                  <div class="bar-pair">
+                    <div class="bar-pillar bar-blue" style="height: 96px;"></div>
+                    <div class="bar-pillar bar-orange" style="height: 42px;"></div>
+                  </div>
+                  <span class="bar-label">T7</span>
+                </div>
+              </div>
+
+              <!-- Legend -->
+              <div class="chart-legend">
+                <span class="legend-item">
+                  <span class="dot-legend dot-blue"></span> Đã đối chiếu
+                </span>
+                <span class="legend-item">
+                  <span class="dot-legend dot-orange"></span> Cần xử lý
+                </span>
+              </div>
+            </div>
+
+            <!-- Right: Tiến độ hoàn thiện (Progress Bars) -->
+            <div class="analytics-card progress-card">
+              <div class="analytics-head">
+                <h3 class="analytics-title">Tiến độ hoàn thiện</h3>
+                <span class="analytics-sub">Mô phỏng</span>
+              </div>
+
+              <div class="progress-items-list">
+                <!-- 1. Đối chiếu thông tin -->
+                <div class="progress-item">
+                  <div class="progress-labels">
+                    <span class="item-name">Đối chiếu thông tin</span>
+                    <span class="item-pct">82%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill fill-cyan" style="width: 82%;"></div>
+                  </div>
+                </div>
+
+                <!-- 2. Hoàn tất hồ sơ -->
+                <div class="progress-item">
+                  <div class="progress-labels">
+                    <span class="item-name">Hoàn tất hồ sơ</span>
+                    <span class="item-pct">67%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill fill-blue" style="width: 67%;"></div>
+                  </div>
+                </div>
+
+                <!-- 3. Cần bổ sung -->
+                <div class="progress-item">
+                  <div class="progress-labels">
+                    <span class="item-name">Cần bổ sung</span>
+                    <span class="item-pct">21%</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill fill-orange" style="width: 21%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Danh sách đại biểu Table (Giao diện chuẩn ảnh mockup) -->
+          <div class="overview-table-card">
+            <!-- Table Header Bar -->
+            <div class="table-top-controls">
+              <div class="table-title-area">
+                <h3 class="table-title">Danh sách đại biểu</h3>
+                <span class="table-sub">/ dữ liệu mẫu</span>
+              </div>
+
+              <div class="table-filters-area">
+                <!-- Search input -->
+                <div class="search-input-wrap">
+                  <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input
+                    type="text"
+                    [ngModel]="overviewSearch()"
+                    (ngModelChange)="overviewSearch.set($event)"
+                    placeholder="Tìm tên hoặc mã..."
+                    class="overview-search-box"
+                  />
+                </div>
+
+                <!-- Filter Status -->
+                <select
+                  [ngModel]="overviewStatusFilter()"
+                  (ngModelChange)="overviewStatusFilter.set($event)"
+                  class="overview-status-select"
+                >
+                  <option value="ALL">Tất cả trạng thái</option>
+                  <option value="QUALIFIED">Đủ điều kiện</option>
+                  <option value="PENDING">Chờ đối chiếu</option>
+                  <option value="NEED_UPDATE">Cần bổ sung</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-scroll-wrap">
+              <table class="overview-table">
+                <thead>
+                  <tr>
+                    <th>MÃ ĐẠI BIỂU</th>
+                    <th>HỌ VÀ TÊN</th>
+                    <th>ĐƠN VỊ</th>
+                    <th>TRẠNG THÁI</th>
+                    <th class="th-center">CHI TIẾT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of overviewDelegates(); track item.delegate.mssv) {
+                    <tr>
+                      <td class="td-code">{{ item.code }}</td>
+                      <td class="td-name">
+                        <strong>{{ item.fullName }}</strong>
+                      </td>
+                      <td class="td-unit">{{ item.unit }}</td>
+                      <td class="td-status">
+                        <span class="status-pill {{ item.statusClass }}">
+                          {{ item.status }}
+                        </span>
+                      </td>
+                      <td class="td-center">
+                        <button
+                          type="button"
+                          class="btn-detail-arrow"
+                          (click)="viewDelegateDetail(item.delegate)"
+                          title="Xem chi tiết hồ sơ & mã QR"
+                        >
+                          ↗
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                  @if (overviewDelegates().length === 0) {
+                    <tr>
+                      <td colspan="5" class="td-empty">
+                        Không tìm thấy đại biểu nào phù hợp với điều kiện tìm kiếm.
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- =====================================================================
+           TAB 2: ĐẠI BIỂU (Toàn diện quản lý đại biểu + bộ lọc + thêm mới)
+           ===================================================================== -->
+      @if (activeTab() === 'delegates') {
+        <div class="tab-pane-wrap">
+          <app-stats></app-stats>
+        </div>
+      }
+
+      <!-- =====================================================================
+           TAB 3: TIÊU CHÍ (Phân tích chỉ số tiêu biểu, độ tuổi, sinh viên 5 tốt)
+           ===================================================================== -->
+      @if (activeTab() === 'criteria') {
+        <div class="tab-pane-wrap">
+          <app-stats></app-stats>
+        </div>
+      }
+
+      <!-- =====================================================================
+           TAB 4: ĐIỂM DANH QR CAMERA (Camera live điểm danh siêu tốc)
+           ===================================================================== -->
+      @if (activeTab() === 'scanner') {
+        <div class="tab-pane-wrap">
+          <app-scanner></app-scanner>
+        </div>
+      }
+
+      <!-- =====================================================================
+           TAB 5: KHẢO SÁT THÔNG TIN ĐẠI BIỂU (Dành cho Admin vì Admin cũng là sinh viên)
+           ===================================================================== -->
+      @if (activeTab() === 'survey') {
+        <div class="tab-pane-wrap">
+          <div class="pane-card-banner">
+            <h2>Phiếu Khảo Sát Thông Tin Đại Biểu</h2>
+            <p>Admin cũng là sinh viên và đại biểu Đại hội, hãy cập nhật thông tin khảo sát của mình bên dưới.</p>
+          </div>
+          <app-survey-form></app-survey-form>
+        </div>
+      }
+
+      <!-- =====================================================================
+           TAB 6: MÃ QR & IN THẺ ĐEO
+           ===================================================================== -->
+      @if (activeTab() === 'badges') {
+        <div class="tab-pane-wrap">
+          <app-badge-generator></app-badge-generator>
+        </div>
+      }
+
+      <!-- =====================================================================
+           TAB 7: MÀN HÌNH KIOSK LỄ TÂN
+           ===================================================================== -->
+      @if (activeTab() === 'kiosk') {
+        <div class="tab-pane-wrap">
+          <app-kiosk-screen></app-kiosk-screen>
+        </div>
+      }
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       DELEGATE DETAIL MODAL (Khi bấm nút ↗ chi tiết từ bảng tổng quan)
+       ========================================================================= -->
+  @if (selectedDelegate(); as d) {
+    <div class="admin-modal-backdrop" (click)="closeDelegateDetail()">
+      <div class="admin-modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <h3>HỒ SƠ ĐẠI BIỂU: {{ d.fullName }}</h3>
+          <button type="button" class="btn-close-modal" (click)="closeDelegateDetail()">✕</button>
+        </div>
+
+        <div class="modal-body-grid">
+          <div class="modal-info-col">
+            <div class="info-row">
+              <span class="info-lbl">Họ và tên:</span>
+              <strong class="info-val">{{ d.fullName }}</strong>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">MSSV (Mã chính):</span>
+              <strong class="info-val text-cyan">{{ d.mssv }}</strong>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Đơn vị / Chi đoàn:</span>
+              <span class="info-val">{{ d.unit }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Ngày sinh / Giới tính:</span>
+              <span class="info-val">{{ d.dob }} • {{ d.gender }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Đảng viên:</span>
+              <span class="info-val">{{ d.isPartyMember ? '⭐ Đảng viên' : 'Đoàn viên' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Trạng thái điểm danh:</span>
+              <span class="status-pill {{ d.checkedIn ? 'status-qualified' : 'status-pending' }}">
+                {{ d.checkedIn ? '✓ Đã điểm danh' : '⏳ Chưa điểm danh' }}
+              </span>
+            </div>
+
+            <div class="modal-actions-bar">
+              <button
+                type="button"
+                class="btn-toggle-att"
+                [class.btn-att-yes]="d.checkedIn"
+                (click)="toggleAttendance(d)"
+              >
+                {{ d.checkedIn ? 'Hủy Điểm Danh' : 'Điểm Danh Ngay' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-qr-col">
+            <span class="qr-lbl">MÃ QR ĐIỂM DANH</span>
+            @if (selectedQrDataUrl(); as qr) {
+              <img [src]="qr" alt="Mã QR" class="modal-qr-img" />
+            }
+            <span class="qr-sub">Quét mã bằng Camera để điểm danh</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
