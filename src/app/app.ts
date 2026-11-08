@@ -11,6 +11,7 @@ import { StatsComponent } from './components/stats/stats';
 import { ScannerComponent } from './components/scanner/scanner';
 import { KioskScreenComponent } from './components/kiosk-screen/kiosk-screen';
 import { AuthModalComponent } from './components/auth-modal/auth-modal';
+import { LandingLoginComponent } from './components/landing-login/landing-login';
 
 export type ActiveTab = 'lookup' | 'survey' | 'badges' | 'stats' | 'scanner' | 'kiosk';
 
@@ -20,6 +21,7 @@ export type ActiveTab = 'lookup' | 'survey' | 'badges' | 'stats' | 'scanner' | '
   imports: [
     CommonModule,
     FormsModule,
+    LandingLoginComponent,
     DelegateLookupComponent,
     SurveyFormComponent,
     BadgeGeneratorComponent,

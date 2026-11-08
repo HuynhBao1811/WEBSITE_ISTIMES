@@ -2,7 +2,13 @@ const express = require('express');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 
-const ADMIN_EMAILS = ['ducnh234112e@st.uel.edu.vn', 'baohgk24411e@st.uel.edu.vn'];
+const ADMIN_EMAILS = [
+  'khoihak25416@st.uel.edu.vn',
+  'vyvhpk25411e@st.uel.edu.vn',
+  'anhnnk25406@st.uel.edu.vn',
+  'baohgk24411e@st.uel.edu.vn',
+  'ducnh23411e@st.uel.edu.vn'
+];
 const roleForEmail = email => ADMIN_EMAILS.includes(email.trim().toLowerCase()) ? 'admin' : 'user';
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const publicUser = (user, role) => ({

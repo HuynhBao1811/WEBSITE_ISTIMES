@@ -1,0 +1,336 @@
+<div class="landing-container">
+  <!-- Top Left Branding (Logo Combo UEL - Đoàn - FIS & Text) -->
+  <header class="top-brand-header">
+    <div class="logo-combo-box">
+      <img src="images/logo-combo.png" alt="Logo UEL - Đoàn - FIS" class="logo-combo-img" />
+    </div>
+    <div class="brand-titles">
+      <span class="school-name">TRƯỜNG ĐẠI HỌC KINH TẾ - LUẬT</span>
+      <h1 class="faculty-name">KHOA HỆ THỐNG THÔNG TIN</h1>
+    </div>
+  </header>
+
+  <!-- Right Gradient & Main Auth Section -->
+  <main class="auth-section">
+    <div class="auth-box-wrapper">
+      <!-- Main Auth Card -->
+      <div class="auth-card">
+        <!-- Top Title & Badge Pill -->
+        <div class="card-top-bar">
+          <div class="title-with-tabs">
+            <h2 class="card-title">{{ mode() === 'login' ? 'Đăng nhập' : 'Đăng ký tài khoản' }}</h2>
+            <div class="mode-switcher">
+              <button
+                type="button"
+                class="btn-switch-mode"
+                [class.active]="mode() === 'login'"
+                (click)="mode.set('login')"
+              >
+                Đăng nhập
+              </button>
+              <button
+                type="button"
+                class="btn-switch-mode"
+                [class.active]="mode() === 'register'"
+                (click)="mode.set('register')"
+              >
+                Đăng ký
+              </button>
+            </div>
+          </div>
+
+          <div class="sub-portal-pill">
+            <span class="mortarboard-icon">🎓</span>
+            <span>Cổng Hoạt động & Điểm rèn luyện</span>
+          </div>
+        </div>
+
+        <!-- Alert messages -->
+        @if (errorMessage()) {
+          <div class="alert alert-error">
+            <span>⚠️ {{ errorMessage() }}</span>
+          </div>
+        }
+        @if (successMessage()) {
+          <div class="alert alert-success">
+            <span>✓ {{ successMessage() }}</span>
+          </div>
+        }
+
+        <!-- FORM ĐĂNG NHẬP -->
+        @if (mode() === 'login') {
+          <form class="auth-form" (ngSubmit)="onLogin()">
+            <!-- Username / Email -->
+            <div class="form-field">
+              <label class="field-label">
+                <span class="label-icon">👤</span>
+                <span>Tên đăng nhập hoặc email</span>
+              </label>
+              <div class="input-shell">
+                <input
+                  type="text"
+                  class="text-input"
+                  [(ngModel)]="username"
+                  name="username"
+                  placeholder="MSSV hoặc Email"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-field">
+              <label class="field-label">
+                <span class="label-icon">🔒</span>
+                <span>Mật khẩu</span>
+              </label>
+              <div class="input-shell with-toggle">
+                <input
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="text-input"
+                  [(ngModel)]="password"
+                  name="password"
+                  placeholder="Nhập mật khẩu"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn-toggle-eye"
+                  (click)="togglePassword()"
+                  [title]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+                >
+                  @if (showPassword()) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  }
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember me row -->
+            <div class="remember-row">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [checked]="rememberMe()"
+                  (change)="rememberMe.set(!rememberMe())"
+                />
+                <span class="custom-check"></span>
+                <span class="check-text">Ghi nhớ đăng nhập</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit-main">
+              <span class="btn-icon">➔]</span>
+              <span>Đăng nhập</span>
+            </button>
+          </form>
+
+          <!-- Divider -->
+          <div class="social-divider">
+            <span>Hoặc đăng nhập với</span>
+          </div>
+
+          <!-- Google Login Button -->
+          <div class="google-auth-shell">
+            <button
+              type="button"
+              class="btn-google-sign"
+              (click)="openGoogleLogin()"
+              [disabled]="googleBusy()"
+            >
+              <svg viewBox="0 0 48 48" class="google-svg-icon">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              </svg>
+              <span>{{ googleBusy() ? 'Đang mở cửa sổ Google...' : 'Đăng nhập bằng Google' }}</span>
+            </button>
+          </div>
+
+          <!-- Quick Admin Toggle for 5 BTV Đoàn Khoa -->
+          <div class="quick-admin-toggle-bar">
+            <button
+              type="button"
+              class="btn-toggle-admins"
+              (click)="showQuickAdmin.set(!showQuickAdmin())"
+            >
+              <span>{{ showQuickAdmin() ? '▲ Ẩn danh sách Admin BTV' : '▼ Đăng nhập nhanh Quản trị viên (5 BTV Đoàn Khoa)' }}</span>
+            </button>
+
+            @if (showQuickAdmin()) {
+              <div class="admin-quick-chips">
+                @for (adm of adminList; track adm.email) {
+                  <button
+                    type="button"
+                    class="chip-admin"
+                    (click)="quickAdminLogin(adm.email)"
+                    title="Bấm để đăng nhập ngay với tư cách này"
+                  >
+                    <span class="chip-badge">Admin</span>
+                    <span class="chip-name">{{ adm.title }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Continue as Guest option -->
+          <div class="guest-option">
+            <button type="button" class="btn-guest-link" (click)="continueAsGuest()">
+              <span>Tra cứu thông tin đại biểu không cần đăng nhập →</span>
+            </button>
+          </div>
+        }
+
+        <!-- FORM ĐĂNG KÝ -->
+        @if (mode() === 'register') {
+          <form class="auth-form" (ngSubmit)="onRegister()">
+            <div class="form-field">
+              <label class="field-label">
+                <span class="label-icon">👤</span>
+                <span>Họ và Tên Đoàn viên *</span>
+              </label>
+              <div class="input-shell">
+                <input
+                  type="text"
+                  class="text-input"
+                  [(ngModel)]="regFullName"
+                  name="regFullName"
+                  placeholder="VD: Nguyễn Văn An"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">
+                <span class="label-icon">🆔</span>
+                <span>Mã số sinh viên (MSSV)</span>
+              </label>
+              <div class="input-shell">
+                <input
+                  type="text"
+                  class="text-input"
+                  [(ngModel)]="regMssv"
+                  name="regMssv"
+                  placeholder="VD: K244118888"
+                />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">
+                <span class="label-icon">✉️</span>
+                <span>Email (@st.uel.edu.vn) *</span>
+              </label>
+              <div class="input-shell">
+                <input
+                  type="email"
+                  class="text-input"
+                  [(ngModel)]="regEmail"
+                  name="regEmail"
+                  placeholder="VD: tensinhvien@st.uel.edu.vn"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">
+                <span class="label-icon">🔒</span>
+                <span>Mật khẩu *</span>
+              </label>
+              <div class="input-shell">
+                <input
+                  type="password"
+                  class="text-input"
+                  [(ngModel)]="regPassword"
+                  name="regPassword"
+                  placeholder="Tối thiểu 6 ký tự"
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit-main">
+              <span>ĐĂNG KÝ TÀI KHOẢN MỚI</span>
+            </button>
+          </form>
+        }
+      </div>
+
+      <!-- Social Media & Contact Footer (Dưới đó có Facebook, Instagram, Tiktok, Email) -->
+      <footer class="landing-footer">
+        <div class="social-links-bar">
+          <!-- Facebook -->
+          <a
+            href="https://www.facebook.com/httt.uel"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link fb"
+            title="Facebook Khoa HTTT UEL"
+          >
+            <span class="social-icon">📘</span>
+            <span>Facebook</span>
+          </a>
+
+          <!-- Instagram -->
+          <a
+            href="https://www.instagram.com/thehomee__/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link insta"
+            title="Instagram The Homee"
+          >
+            <span class="social-icon">📷</span>
+            <span>Instagram</span>
+          </a>
+
+          <!-- TikTok -->
+          <a
+            href="https://www.tiktok.com/@httt.uel"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link tiktok"
+            title="TikTok Khoa HTTT"
+          >
+            <span class="social-icon">🎵</span>
+            <span>TikTok</span>
+          </a>
+
+          <!-- Email (Mở thẳng trang soạn thư Gmail gửi đến dkhethongthongtin@st.uel.edu.vn) -->
+          <a
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=dkhethongthongtin@st.uel.edu.vn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link email"
+            title="Soạn thư Gmail gửi tới Đoàn Khoa HTTT"
+          >
+            <span class="social-icon">✉️</span>
+            <span>Email</span>
+          </a>
+        </div>
+
+        <!-- Address & Copyright Info -->
+        <div class="contact-address-info">
+          <p class="address-line">
+            📍 Phòng A.210, 669 Đỗ Mười, Khu phố 3, phường Linh Xuân, TP. Thủ Đức, TP. Hồ Chí Minh • 📞 1900 1239 - Ext: 6921
+          </p>
+          <p class="copyright-line">
+            © 2026 Đoàn Khoa Hệ thống thông tin - Trường Đại học Kinh tế – Luật, ĐHQG-HCM.
+          </p>
+        </div>
+      </footer>
+    </div>
+  </main>
+</div>

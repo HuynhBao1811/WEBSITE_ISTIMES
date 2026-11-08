@@ -1,4 +1,7 @@
-<div class="app-shell">
+@if (!auth.isLoggedIn()) {
+  <app-landing-login></app-landing-login>
+} @else {
+  <div class="app-shell">
   <!-- Topmost Notification Banner (Giống ảnh mẫu của user) -->
   <aside class="top-announcement-bar no-print">
     <div class="container bar-inner">
@@ -294,3 +297,4 @@
     </div>
   }
 </div>
+}

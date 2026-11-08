@@ -1,0 +1,639 @@
+/* ==========================================================================
+   Full Viewport Landing Container
+   ========================================================================== */
+.landing-container {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  background-color: #0d3b66;
+  background-image: 
+    linear-gradient(to right, rgba(13, 59, 102, 0.05) 0%, rgba(20, 78, 140, 0.25) 40%, rgba(20, 78, 140, 0.88) 65%, #144e8c 82%, #144e8c 100%),
+    url('/images/DSC_0876.jpg');
+  background-size: cover;
+  background-position: center left;
+  background-repeat: no-repeat;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* ==========================================================================
+   Top Left Branding (UEL - Đoàn - FIS Logos & Title)
+   ========================================================================== */
+.top-brand-header {
+  position: absolute;
+  top: 28px;
+  left: 36px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(9, 35, 71, 0.45);
+  backdrop-filter: blur(8px);
+  padding: 10px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.logo-combo-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-combo-img {
+  height: 56px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.brand-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.school-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.faculty-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 21px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 2px 0 0 0;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* ==========================================================================
+   Right Auth Section & Card
+   ========================================================================== */
+.auth-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 40px 60px 40px 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.auth-box-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  gap: 20px;
+}
+
+/* Auth Card */
+.auth-card {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 30px 34px;
+  box-shadow: 0 16px 45px rgba(0, 20, 50, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Card Header */
+.card-top-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.title-with-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #144e8c;
+  margin: 0;
+}
+
+.mode-switcher {
+  display: inline-flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 8px;
+}
+
+.btn-switch-mode {
+  border: none;
+  background: transparent;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-switch-mode.active {
+  background: #ffffff;
+  color: #144e8c;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sub-portal-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  width: fit-content;
+}
+
+.mortarboard-icon {
+  font-size: 14px;
+}
+
+/* Alert messages */
+.alert {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Form Fields */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.label-icon {
+  font-size: 14px;
+}
+
+.input-shell {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.input-shell:focus-within {
+  border-color: #144e8c;
+  box-shadow: 0 0 0 3px rgba(20, 78, 140, 0.15);
+}
+
+.text-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.text-input::placeholder {
+  color: #94a3b8;
+}
+
+.input-shell.with-toggle {
+  position: relative;
+  padding-right: 40px;
+}
+
+.btn-toggle-eye {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+}
+
+.btn-toggle-eye:hover {
+  color: #144e8c;
+}
+
+.btn-toggle-eye svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Remember me row */
+.remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -2px;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input {
+  accent-color: #144e8c;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.check-text {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Submit Main Button */
+.btn-submit-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #144e8c;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(20, 78, 140, 0.35);
+  margin-top: 4px;
+}
+
+.btn-submit-main:hover {
+  background: #0f3d70;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(20, 78, 140, 0.45);
+}
+
+.btn-icon {
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+/* Divider */
+.social-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 18px 0 14px 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.social-divider::before,
+.social-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.social-divider span {
+  padding: 0 12px;
+}
+
+/* Google Sign-in Button */
+.google-auth-shell {
+  width: 100%;
+}
+
+.btn-google-sign {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn-google-sign:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.google-svg-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Quick Admin Accordion */
+.quick-admin-toggle-bar {
+  margin-top: 14px;
+  width: 100%;
+}
+
+.btn-toggle-admins {
+  width: 100%;
+  background: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #144e8c;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-toggle-admins:hover {
+  background: #e2e8f0;
+}
+
+.admin-quick-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  background: #f8fafc;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.chip-admin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.chip-admin:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateX(2px);
+}
+
+.chip-badge {
+  background: #fef08a;
+  color: #854d0e;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.chip-name {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Guest option */
+.guest-option {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.btn-guest-link {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.btn-guest-link:hover {
+  color: #144e8c;
+}
+
+/* ==========================================================================
+   Landing Footer (Social Links & Contact Info)
+   ========================================================================== */
+.landing-footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.social-links-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.social-link:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.social-link.fb:hover {
+  background: #1877f2;
+  border-color: #1877f2;
+}
+
+.social-link.insta:hover {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  border-color: #dc2743;
+}
+
+.social-link.tiktok:hover {
+  background: #000000;
+  border-color: #000000;
+}
+
+.social-link.email:hover {
+  background: #ea4335;
+  border-color: #ea4335;
+}
+
+.social-icon {
+  font-size: 14px;
+}
+
+.contact-address-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11.5px;
+  line-height: 1.4;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.address-line, .copyright-line {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 992px) {
+  .landing-container {
+    background-image: 
+      linear-gradient(to bottom, rgba(20, 78, 140, 0.3) 0%, rgba(20, 78, 140, 0.92) 40%, #144e8c 100%),
+      url('/images/DSC_0876.jpg');
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .top-brand-header {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 20px auto 0 auto;
+    width: fit-content;
+    max-width: 90vw;
+  }
+
+  .auth-section {
+    justify-content: center;
+    padding: 30px 20px 40px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-brand-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 10px 14px;
+  }
+
+  .logo-combo-img {
+    height: 44px;
+  }
+
+  .school-name {
+    font-size: 11px;
+  }
+
+  .faculty-name {
+    font-size: 16px;
+  }
+
+  .auth-card {
+    padding: 24px 20px;
+  }
+
+  .social-links-bar {
+    gap: 8px;
+  }
+
+  .social-link {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+}
